@@ -44,7 +44,7 @@ namespace tasktracker.Controllers
         /// <param name="id">ID en int</param>
         /// <returns>Retour d'un UserDto si existe</returns>
         [HttpGet("{id}")]
-        public async Task<UserDto?> GetUserById(int id)
+        public async Task<UserDto> GetUserById(int id)
         {
             return await _userService.GetUserByIdAsync(id);
         }
@@ -59,6 +59,20 @@ namespace tasktracker.Controllers
         {
             UserDto user = await _userService.CreateUserAsync(userDto);
             return Ok(user);    // Retourne un ok de réponse mais pas le user créé
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] CreateUserDto userDto)
+        {
+            UserDto updatedUser = await _userService.UpdateUserAsync(id, userDto);
+            return Ok(updatedUser);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteUser(int id)
+        {
+            await _userService.DeleteUserAsync(id);
+            return Ok();
         }
     }
 }

@@ -4,12 +4,10 @@ using tasktracker.Enums;
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Modèle DTO de lecture d'un project
+    /// Modèle DTO de création de project - sans Id : autoincrémenté en base
     /// </summary>
-    public class ProjectDto
+    public class CreateProjectDto
     {
-        [Required]
-        public required int Id { get; set; }
         [Required]
         [MaxLength(50)]
         public required string Title { get; set; }

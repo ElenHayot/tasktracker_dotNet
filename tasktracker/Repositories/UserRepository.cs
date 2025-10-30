@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using tasktracker.Data;
 using tasktracker.DtoModels;
@@ -45,6 +46,22 @@ namespace tasktracker.Repositories
             var entry = await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return entry.Entity;
+        }
+
+        /// <inheritdoc/>
+        public async Task<UserEntity> UpdateUserAsync(UserEntity existingUser, UserEntity updatedUser)
+        {
+            _context.Entry(existingUser).CurrentValues.SetValues(updatedUser);
+            await _context.SaveChangesAsync();
+            return updatedUser;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteUserAsync(UserEntity user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

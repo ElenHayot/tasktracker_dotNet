@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using tasktracker.Enums
+using tasktracker.Enums;
 
 namespace tasktracker.Controllers
 {
