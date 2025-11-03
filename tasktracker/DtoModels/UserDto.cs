@@ -3,7 +3,7 @@ using tasktracker.Enums;
 
 namespace tasktracker.DtoModels
 {
-    public class UserDto
+    public class UserDto : HandlingDto
     {
         [Required]
         public required int Id { get; set; }

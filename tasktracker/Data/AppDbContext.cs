@@ -10,5 +10,7 @@ namespace tasktracker.Data
 
         // On déclare ici nos tables
         public DbSet<UserEntity> Users { get; set; }
+        public DbSet<ProjectEntity> Projects { get; set; }
+        public DbSet<TaskEntity> Tasks { get; set; }
     }
 }

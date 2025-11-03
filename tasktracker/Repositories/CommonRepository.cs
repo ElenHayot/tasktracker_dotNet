@@ -10,6 +10,7 @@ namespace tasktracker.Repositories
         {
         }
 
+        /// <inheritdoc/>
         public IQueryable<T> ApplyFilter<T>(IQueryable<T> query, object filter)
         {
 

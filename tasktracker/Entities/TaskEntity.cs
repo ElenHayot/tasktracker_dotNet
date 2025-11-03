@@ -5,10 +5,7 @@ using tasktracker.Enums;
 
 namespace tasktracker.Entities
 {
-    /// <summary>
-    /// Modèle project DB/entity
-    /// </summary>
-    public class ProjectEntity : HandlingDto
+    public class TaskEntity : HandlingDto
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,6 +15,11 @@ namespace tasktracker.Entities
         public required string Title { get; set; }
 
         public string? Description { get; set; }
+
+        [Required]
+        public required int ProjectId { get; set; }
+
+        public int? UserId { get; set; }
 
         [Required]
         public required StatusEnum Status { get; set; }

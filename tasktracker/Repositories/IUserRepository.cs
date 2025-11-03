@@ -43,8 +43,8 @@ namespace tasktracker.Repositories
         /// <summary>
         /// Delete an existing user
         /// </summary>
-        /// <param name="id">User's ID to delete</param>
+        /// <param name="user">User to delete</param>
         /// <returns>Returns nothing</returns>
-        Task<bool> DeleteUserAsync(UserEntity id);
+        Task<bool> DeleteUserAsync(UserEntity user);
     }
 }

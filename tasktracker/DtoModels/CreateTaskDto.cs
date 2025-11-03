@@ -3,20 +3,19 @@ using tasktracker.Enums;
 
 namespace tasktracker.DtoModels
 {
-    /// <summary>
-    /// Modèle DTO de lecture d'un project
-    /// </summary>
-    public class ProjectDto : HandlingDto
+    public class CreateTaskDto : HandlingDto
     {
-        [Required]
-        public required int Id { get; set; }
-
         [Required]
         [MaxLength(50)]
         public required string Title { get; set; }
 
         [MaxLength(240)]
         public string? Description { get; set; }
+
+        [Required]
+        public required int ProjectId { get; set; }
+
+        public int? UserId { get; set; } = 0;
 
         [Required]
         public required StatusEnum Status { get; set; } = StatusEnum.Undefined;

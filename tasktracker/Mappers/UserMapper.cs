@@ -31,9 +31,7 @@ namespace tasktracker.Mappers
                 Email = dto.Email,
                 Role = dto.Role,
                 PasswordHash = PasswordHelper.HashPassword(dto.Password),
-                CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                CreatedBy = dto.Id.ToString(),
                 UpdatedBy = dto.Id.ToString()
             };
         }
@@ -47,7 +45,11 @@ namespace tasktracker.Mappers
                 Firstname = entity.Firstname,
                 Email = entity.Email,
                 Role = entity.Role,
-                Password = ""
+                Password = "",
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt,
+                CreatedBy = entity.CreatedBy,
+                UpdatedBy = entity.UpdatedBy
             };
         }
     }
