@@ -2,6 +2,9 @@
 
 namespace tasktracker.DtoModels
 {
+    /// <summary>
+    /// DTO query filter model for Task
+    /// </summary>
     public class TaskQueryFilter
     {
         public string? Title { get; set; }

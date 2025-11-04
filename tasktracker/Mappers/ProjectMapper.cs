@@ -3,8 +3,16 @@ using tasktracker.Entities;
 
 namespace tasktracker.Mappers
 {
+    /// <summary>
+    /// Mapper management for Projects
+    /// </summary>
     public class ProjectMapper
     {
+        /// <summary>
+        /// Mapper CreateProjectDto -> ProjectEntity
+        /// </summary>
+        /// <param name="dto">dto to map</param>
+        /// <returns>ProjectEntity object</returns>
         public static ProjectEntity ToCreateEntity(CreateProjectDto dto)
         {
             return new ProjectEntity
@@ -19,6 +27,11 @@ namespace tasktracker.Mappers
             };
         }
 
+        /// <summary>
+        /// Mapper ProjectDto -> ProjectEntity
+        /// </summary>
+        /// <param name="dto">dto to map</param>
+        /// <returns>ProjectEntity object</returns>
         public static ProjectEntity ToEntity(ProjectDto dto)
         {
             return new ProjectEntity
@@ -32,6 +45,11 @@ namespace tasktracker.Mappers
             };
         }
 
+        /// <summary>
+        /// Mapper ProjectEntity -> ProjectDto
+        /// </summary>
+        /// <param name="entity">entity to map</param>
+        /// <returns>ProjectDto object</returns>
         public static ProjectDto ToDto(ProjectEntity entity)
         {
             return new ProjectDto

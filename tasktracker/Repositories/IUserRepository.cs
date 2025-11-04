@@ -3,33 +3,36 @@ using tasktracker.Entities;
 
 namespace tasktracker.Repositories
 {
+    /// <summary>
+    /// User repository interface
+    /// </summary>
     public interface IUserRepository
     {
         /// <summary>
-        /// Retourne la liste des users avec filtre appliqué
+        /// Gett all users with applied filter
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of users (entities)</returns>
         Task<IEnumerable<UserEntity>> GetAllUsersFilteredAsync(UserQueryFilter filter);
 
         /// <summary>
-        /// Retrouve un utilisateur par son ID
+        /// Get a user by its ID
         /// </summary>
-        /// <param name="id">PK de Users</param>
-        /// <returns></returns>
+        /// <param name="id">ID to find</param>
+        /// <returns>One user (entity)</returns>
         Task<UserEntity?> GetUserByIdAsync(int id);
 
         /// <summary>
-        /// Retourne un utilisateur unique avec l'email
+        /// Get a user by its email
         /// </summary>
-        /// <param name="email">Email de Users</param>
-        /// <returns></returns>
+        /// <param name="email">Email to find</param>
+        /// <returns>One user (entity)</returns>
         Task<UserEntity?> GetUserByEmailAsync(string email);
 
         /// <summary>
-        /// Create a new user
+        /// Add a user in DB
         /// </summary>
         /// <param name="user">UserEntity to create</param>
-        /// <returns>The created user</returns>
+        /// <returns>The created user (entity)</returns>
         Task<UserEntity> CreateUserAsync(UserEntity user);
 
         /// <summary>
@@ -37,14 +40,14 @@ namespace tasktracker.Repositories
         /// </summary>
         /// <param name="existingUser">Existing user in DB</param>
         /// <param name="updatedUser">Updated user with new values</param>
-        /// <returns>The updatedUser</returns>
+        /// <returns>The updated user (entity)</returns>
         Task<UserEntity> UpdateUserAsync(UserEntity existingUser, UserEntity updatedUser);
 
         /// <summary>
         /// Delete an existing user
         /// </summary>
         /// <param name="user">User to delete</param>
-        /// <returns>Returns nothing</returns>
+        /// <returns>true/false</returns>
         Task<bool> DeleteUserAsync(UserEntity user);
     }
 }

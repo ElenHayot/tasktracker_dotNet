@@ -4,7 +4,7 @@ using tasktracker.Enums;
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Modèle DTO de lecture d'un project
+    /// DTO model Project
     /// </summary>
     public class ProjectDto : HandlingDto
     {

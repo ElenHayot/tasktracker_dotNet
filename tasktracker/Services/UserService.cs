@@ -11,10 +11,20 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace tasktracker.Services
 {
+    /// <summary>
+    /// User service - manage Users calls
+    /// </summary>
     public class UserService : IUserService
     {
+        /// <summary>
+        /// Local user repository instance
+        /// </summary>
         private readonly IUserRepository _userRepository;
 
+        /// <summary>
+        /// UserService constructor
+        /// </summary>
+        /// <param name="userRepository">User repository instance</param>
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -74,14 +84,14 @@ namespace tasktracker.Services
         /// <inheritdoc/>
         public async Task<UserDto> UpdateUserAsync(int id, CreateUserDto userDto)
         {
-            // On récupère le user entity existant en base
+            // Get existing user in db
             UserEntity? existingUser = await _userRepository.GetUserByIdAsync(id);
             if (existingUser == null)
             {
                 throw new NotFoundException($"No user with id '{id}' found.");
             }
 
-            // On construit le nouveau user entity
+            // Build new user
             UserEntity updatedUser = new()
             {
                 Id = id,
@@ -92,9 +102,9 @@ namespace tasktracker.Services
                 PasswordHash = existingUser.PasswordHash
             };
 
-            // Update du user entity existant avec le nouveau user entity
+            // Update existingUser with updatedUser data
             updatedUser = await _userRepository.UpdateUserAsync(existingUser, updatedUser);
-            // Construction d'un DTO
+            // DTO to send back
             UserDto updatedUserDto = UserMapper.ToDto(updatedUser);
 
             return updatedUserDto;

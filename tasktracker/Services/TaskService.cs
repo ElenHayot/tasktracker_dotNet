@@ -8,7 +8,7 @@ using tasktracker.Exceptions;
 namespace tasktracker.Services
 {
     /// <summary>
-    /// Service to manage Tasks part
+    /// Task service - manage Tasks calls
     /// </summary>
     public class TaskService : ITaskService
     {

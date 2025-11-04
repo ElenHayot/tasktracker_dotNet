@@ -1,5 +1,8 @@
 ﻿namespace tasktracker.Enums
 {
+    /// <summary>
+    /// Status enum
+    /// </summary>
     public enum StatusEnum
     {
         New,

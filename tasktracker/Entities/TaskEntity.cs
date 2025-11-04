@@ -5,6 +5,9 @@ using tasktracker.Enums;
 
 namespace tasktracker.Entities
 {
+    /// <summary>
+    /// Entity model for Tasks table
+    /// </summary>
     public class TaskEntity : HandlingDto
     {
         [Key]

@@ -4,6 +4,9 @@ using tasktracker.Enums;
 
 namespace tasktracker.Services
 {
+    /// <summary>
+    /// User service interface
+    /// </summary>
     public interface IUserService
     {
         /// <summary>

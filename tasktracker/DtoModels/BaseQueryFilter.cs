@@ -1,7 +1,7 @@
 ﻿namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Classe pour les filtres de bases communs à tous les filtres services
+    /// Query filter base - common to all filter types
     /// </summary>
     public abstract class BaseQueryFilter
     {

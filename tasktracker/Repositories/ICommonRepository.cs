@@ -1,5 +1,8 @@
 ﻿namespace tasktracker.Repositories
 {
+    /// <summary>
+    /// Common repository interface
+    /// </summary>
     public interface ICommonRepository
     {
         /// <summary>

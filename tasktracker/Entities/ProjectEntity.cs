@@ -6,7 +6,7 @@ using tasktracker.Enums;
 namespace tasktracker.Entities
 {
     /// <summary>
-    /// Modèle project DB/entity
+    /// Entity model for Projects table
     /// </summary>
     public class ProjectEntity : HandlingDto
     {

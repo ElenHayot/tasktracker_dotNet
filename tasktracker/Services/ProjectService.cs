@@ -7,10 +7,20 @@ using tasktracker.Enums;
 
 namespace tasktracker.Services
 {
+    /// <summary>
+    /// Project service - manage Projects calls
+    /// </summary>
     public class ProjectService : IProjectService
     {
+        /// <summary>
+        /// Local project repository instance
+        /// </summary>
         private readonly IProjectRepository _projectRepository;
 
+        /// <summary>
+        /// ProjectService constructor
+        /// </summary>
+        /// <param name="projectRepository">Project repository instance</param>
         public ProjectService(IProjectRepository projectRepository)
         {
             _projectRepository = projectRepository;

@@ -4,8 +4,14 @@ using System.Reflection;
 
 namespace tasktracker.Repositories
 {
+    /// <summary>
+    /// Common repository - manage common DB functions
+    /// </summary>
     public class CommonRepository : ICommonRepository
     {
+        /// <summary>
+        /// CommonRepository constructor
+        /// </summary>
         public CommonRepository()
         {
         }

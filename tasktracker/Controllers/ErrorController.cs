@@ -4,11 +4,17 @@ using tasktracker.Exceptions;
 
 namespace tasktracker.Controllers
 {
+    /// <summary>
+    /// Error controller - manage errors
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]    // api/error
     public class ErrorController : ControllerBase
     {
-        [Route("")]
+        /// <summary>
+        /// Handle throwed errors
+        /// </summary>
+        /// <returns>An error</returns>
         [HttpGet]
         public IActionResult HandleError()
         {

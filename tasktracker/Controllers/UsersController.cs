@@ -6,43 +6,44 @@ using tasktracker.Services;
 namespace tasktracker.Controllers
 {
     /// <summary>
-    /// Controller sur la partie Users
+    /// User controller - manage Users part
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]  //api/v1/users
     public class UsersController : ControllerBase
     {
         /// <summary>
-        /// Instance d'un IUserService
+        /// Local user service istance
         /// </summary>
         private readonly IUserService _userService;
+
         /// <summary>
-        /// Constructeur
+        /// UsersController constructor
         /// </summary>
-        /// <param name="userService">instance d'un IUserService</param>
+        /// <param name="userService">User service instance</param>
         public UsersController(IUserService userService)
         {
             _userService = userService;
         }
 
         /// <summary>
-        /// Appel de la fonction de récupération de la liste des utilisateurs
+        /// Call Service.GetAllUsersFilteredAsync
         /// </summary>
-        /// <param name="name">Filtre possible sur 'name'</param>
-        /// <param name="firstname">Filtre possible sur 'firstname'</param>
-        /// <param name="role">Filtre possible sur 'role'</param>
-        /// <returns>Retour de la liste des utilisateurs correspondants au filtre appliqué</returns>
+        /// <param name="name">FromQuery parameter 'name' - string</param>
+        /// <param name="firstname">FromQuery parameter 'firstname' - string</param>
+        /// <param name="role">FromQuery parameter 'role' - Enum value</param>
+        /// <returns>List of users</returns>
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetAllUsers([FromQuery] string? name, [FromQuery] string? firstname, [FromQuery] RolesEnum? role)
+        public async Task<IEnumerable<UserDto>> GetAllUsersFiltered([FromQuery] string? name, [FromQuery] string? firstname, [FromQuery] RolesEnum? role)
         {
             return await _userService.GetAllUsersFilteredAsync(name, firstname, role);
         }
 
         /// <summary>
-        /// Appel de la fonction de récupération d'un user par son ID
+        /// Call Service.GetUserByIdAsync
         /// </summary>
-        /// <param name="id">ID en int</param>
-        /// <returns>Retour d'un UserDto si existe</returns>
+        /// <param name="id">URL parameter - integer</param>
+        /// <returns>One user</returns>
         [HttpGet("{id}")]
         public async Task<UserDto> GetUserById(int id)
         {
@@ -50,17 +51,23 @@ namespace tasktracker.Controllers
         }
 
         /// <summary>
-        /// Appel de la fonction de création d'utilisateur
+        /// Call Service.CreateUserAsync
         /// </summary>
-        /// <param name="userDto">Type UserDto récupéré dans le body</param>
-        /// <returns>Retour d'un .ok(), pas du user créé</returns>
+        /// <param name="userDto">FromBody object</param>
+        /// <returns>Ok/Nok result</returns>
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto userDto)
         {
             UserDto user = await _userService.CreateUserAsync(userDto);
-            return Ok(user);    // Retourne un ok de réponse mais pas le user créé
+            return Ok(user);
         }
 
+        /// <summary>
+        /// Call Service.UpdateUserAsync
+        /// </summary>
+        /// <param name="id">URL parameter - integer</param>
+        /// <param name="userDto">FromBody object</param>
+        /// <returns>Ok/Nok result</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] CreateUserDto userDto)
         {
@@ -68,6 +75,11 @@ namespace tasktracker.Controllers
             return Ok(updatedUser);
         }
 
+        /// <summary>
+        /// Call Service.DeleteUserAsync
+        /// </summary>
+        /// <param name="id">URL parameter - integer</param>
+        /// <returns>Ok/Nok result</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteUser(int id)
         {

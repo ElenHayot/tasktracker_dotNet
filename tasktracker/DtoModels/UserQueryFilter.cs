@@ -3,7 +3,7 @@
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Filtre de requête pour le service User
+    /// DTO query filter model for User
     /// </summary>
     public class UserQueryFilter : BaseQueryFilter
     {

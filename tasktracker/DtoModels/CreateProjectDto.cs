@@ -4,7 +4,7 @@ using tasktracker.Enums;
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Modèle DTO de création de project - sans Id : autoincrémenté en base
+    /// DTO model without ID field (used to create or update an entity)
     /// </summary>
     public class CreateProjectDto
     {

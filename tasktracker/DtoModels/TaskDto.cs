@@ -3,6 +3,9 @@ using tasktracker.Enums;
 
 namespace tasktracker.DtoModels
 {
+    /// <summary>
+    /// DTO model for Task
+    /// </summary>
     public class TaskDto : HandlingDto
     {
         [Required]

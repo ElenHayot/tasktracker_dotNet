@@ -3,6 +3,9 @@ using tasktracker.Enums;
 
 namespace tasktracker.DtoModels
 {
+    /// <summary>
+    /// DTO model to create (or update) a task - no ID field
+    /// </summary>
     public class CreateTaskDto : HandlingDto
     {
         [Required]

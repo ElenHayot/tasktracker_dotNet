@@ -3,12 +3,20 @@ using tasktracker.Entities;
 
 namespace tasktracker.Data
 {
+    /// <summary>
+    /// Database context management
+    /// </summary>
     public class AppDbContext : DbContext
     {
-        // Le constructeur reçoit la configuration
+        /// <summary>
+        /// AppDbContext constructor
+        /// </summary>
+        /// <param name="options">Context configuration</param>
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
-        // On déclare ici nos tables
+        /// <summary>
+        /// Declare datatables
+        /// </summary>
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<ProjectEntity> Projects { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }

@@ -4,7 +4,7 @@ using tasktracker.Enums;
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// Modèle de création de user (sans Id, autoincrémenté en base)
+    /// DTO model to create (or update) a user - no ID field
     /// </summary>
     public class CreateUserDto
     {

@@ -4,8 +4,16 @@ using tasktracker.Common;
 
 namespace tasktracker.Mappers
 {
+    /// <summary>
+    /// Mapper management for Users
+    /// </summary>
     public class UserMapper
     {
+        /// <summary>
+        /// Mapper CreateUserDto -> UserEntity
+        /// </summary>
+        /// <param name="dto">dto to map</param>
+        /// <returns>UserEntity object</returns>
         public static UserEntity ToCreateEntity(CreateUserDto dto)
         {
             return new UserEntity
@@ -21,6 +29,12 @@ namespace tasktracker.Mappers
                 UpdatedBy = "0"
             };
         }
+
+        /// <summary>
+        /// Mapper UserDto -> UserEntity
+        /// </summary>
+        /// <param name="dto">dto to map</param>
+        /// <returns>UserEntity object</returns>
         public static UserEntity ToEntity(UserDto dto)
         {
             return new UserEntity
@@ -36,6 +50,11 @@ namespace tasktracker.Mappers
             };
         }
 
+        /// <summary>
+        /// Mapper UserEntity -> UserDto
+        /// </summary>
+        /// <param name="entity">entity to map</param>
+        /// <returns>UserDto object</returns>
         public static UserDto ToDto(UserEntity entity)
         {
             return new UserDto

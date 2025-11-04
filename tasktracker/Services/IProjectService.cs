@@ -3,6 +3,9 @@ using tasktracker.Enums;
 
 namespace tasktracker.Services
 {
+    /// <summary>
+    /// Project service interface
+    /// </summary>
     public interface IProjectService
     {
         /// <summary>

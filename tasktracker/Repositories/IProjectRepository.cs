@@ -3,6 +3,9 @@ using tasktracker.Entities;
 
 namespace tasktracker.Repositories
 {
+    /// <summary>
+    /// Project repository interface
+    /// </summary>
     public interface IProjectRepository
     {
         /// <summary>

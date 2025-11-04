@@ -5,13 +5,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace tasktracker.Repositories
 {
+    /// <summary>
+    /// Task repository - manage Tasks db connexion and functions
+    /// </summary>
     public class TaskRepository : ITaskRepository
     {
-        // Loading context
+        /// <summary>
+        /// Local db context instance
+        /// </summary>
         private readonly AppDbContext _context;
-        // Calling CommonRepository
+        
+        /// <summary>
+        /// Local common repository instance
+        /// </summary>
         private readonly ICommonRepository _commonRepository;
 
+        /// <summary>
+        /// TaskRepository constructor
+        /// </summary>
+        /// <param name="context">Db context instance</param>
+        /// <param name="commonRepository">Common repository instance</param>
         public TaskRepository(AppDbContext context, ICommonRepository commonRepository)
         {
             _context = context;

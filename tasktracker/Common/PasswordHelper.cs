@@ -3,39 +3,39 @@
 namespace tasktracker.Common
 {
     /// <summary>
-    /// Gestion du password
+    /// Password management
     /// </summary>
     public class PasswordHelper
     {
         /// <summary>
-        /// Fonction permettant de générer un password
+        /// Hash a password
         /// </summary>
-        /// <param name="password"></param>
-        /// <returns></returns>
+        /// <param name="password">Password to hash</param>
+        /// <returns>Hash</returns>
         public static string HashPassword(string password)
         {
-            // Génère un sel aléatoire
+            // Random salt
             byte[] salt = RandomNumberGenerator.GetBytes(16);
 
-            // Génère un hash PBKDF2
+            // PBKDF2 hash
             using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
             byte[] hash = pbkdf2.GetBytes(32);
 
-            // Combine hash + salt
+            // hash + salt
             byte[] hashBytes = new byte[48];
             Buffer.BlockCopy(salt, 0, hashBytes, 0, 16);
             Buffer.BlockCopy(hash, 0, hashBytes, 16, 32);
 
-            // Retourne en base 64
+            // Convert to Base64
             return Convert.ToBase64String(hashBytes);
         }
 
         /// <summary>
-        /// Fonction permettant de vérifier le password
+        /// Verify a password
         /// </summary>
-        /// <param name="password"></param>
-        /// <param name="storedHash"></param>
-        /// <returns></returns>
+        /// <param name="password">Password to check</param>
+        /// <param name="storedHash">Stored hash</param>
+        /// <returns>true/false</returns>
         public static bool VerifyPassword(string password, string storedHash)
         {
             byte[] hashBytes = Convert.FromBase64String(storedHash);
