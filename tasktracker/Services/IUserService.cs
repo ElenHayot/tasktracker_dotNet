@@ -14,9 +14,10 @@ namespace tasktracker.Services
         /// </summary>
         /// <param name="name">Filter on field 'name'</param>
         /// <param name="firstname">Filter on field 'firstname'</param>
+        /// <param name="phone">Filter on field 'phone'</param>
         /// <param name="role">Filter on field 'role'</param>
         /// <returns>List of users DTO</returns>
-        Task<IEnumerable<UserDto>> GetAllUsersFilteredAsync(string? name, string? firstname, RolesEnum? role);
+        Task<IEnumerable<UserDto>> GetAllUsersFilteredAsync(string? name, string? firstname, string? phone, RolesEnum? role);
 
         /// <summary>
         /// Get one user by its email
@@ -45,7 +46,7 @@ namespace tasktracker.Services
         /// <param name="id">User's id to update</param>
         /// <param name="updatedUserDto">The "new" user</param>
         /// <returns>The updated user</returns>
-        Task<UserDto> UpdateUserAsync(int id, CreateUserDto updatedUserDto);
+        Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updatedUserDto);
 
         /// <summary>
         /// Delete an existing user in DB

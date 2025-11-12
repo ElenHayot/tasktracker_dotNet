@@ -31,12 +31,13 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="name">FromQuery parameter 'name' - string</param>
         /// <param name="firstname">FromQuery parameter 'firstname' - string</param>
+        /// <param name="phone">FromQuery parameter 'phone' - string</param>
         /// <param name="role">FromQuery parameter 'role' - Enum value</param>
         /// <returns>List of users</returns>
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetAllUsersFiltered([FromQuery] string? name, [FromQuery] string? firstname, [FromQuery] RolesEnum? role)
+        public async Task<IEnumerable<UserDto>> GetAllUsersFiltered([FromQuery] string? name, [FromQuery] string? firstname, [FromQuery] string? phone, [FromQuery] RolesEnum? role)
         {
-            return await _userService.GetAllUsersFilteredAsync(name, firstname, role);
+            return await _userService.GetAllUsersFilteredAsync(name, firstname, phone, role);
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace tasktracker.Controllers
         /// <param name="userDto">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] CreateUserDto userDto)
+        public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
         {
             UserDto updatedUser = await _userService.UpdateUserAsync(id, userDto);
             return Ok(updatedUser);

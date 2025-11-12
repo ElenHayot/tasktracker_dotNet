@@ -18,12 +18,19 @@ namespace tasktracker.Services
         private readonly IProjectRepository _projectRepository;
 
         /// <summary>
+        /// Local logger instance for ProjectService
+        /// </summary>
+        private readonly ILogger<ProjectService> _logger;
+
+        /// <summary>
         /// ProjectService constructor
         /// </summary>
         /// <param name="projectRepository">Project repository instance</param>
-        public ProjectService(IProjectRepository projectRepository)
+        /// <param name="logger">Project service logger instance</param>
+        public ProjectService(IProjectRepository projectRepository, ILogger<ProjectService> logger)
         {
             _projectRepository = projectRepository;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
@@ -84,7 +91,7 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ProjectDto> UpdateProjectAsync(int id, CreateProjectDto updatedProject)
+        public async Task<ProjectDto> UpdateProjectAsync(int id, UpdateProjectDto updatedProject)
         {
             ProjectEntity? existingProject = await _projectRepository.GetProjectByIdAsync(id);
             if (existingProject == null)
@@ -92,14 +99,7 @@ namespace tasktracker.Services
                 throw new NotFoundException($"Project with id {id} not foud");
             }
 
-            ProjectEntity updatedEntity = new ()
-            {
-                Id = id,
-                Title = updatedProject.Title,
-                Description = updatedProject.Description,
-                Status = updatedProject.Status,
-                UpdatedAt = DateTime.UtcNow
-            };
+            ProjectEntity updatedEntity = ProjectMapper.ToUpdateEntity(existingProject, updatedProject);
 
             updatedEntity = await _projectRepository.UpdateProjectAsync(existingProject, updatedEntity);
             var projectDto = ProjectMapper.ToDto(updatedEntity);

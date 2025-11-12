@@ -39,7 +39,7 @@ namespace tasktracker.Services
         /// <param name="id">Task's ID to update</param>
         /// <param name="updatedTask">New datas</param>
         /// <returns>The updated task (DTO)</returns>
-        Task<TaskDto> UpdateTaskAsync(int id, CreateTaskDto updatedTask);
+        Task<TaskDto> UpdateTaskAsync(int id, UpdateTaskDto updatedTask);
 
         /// <summary>
         /// Delete an existing task

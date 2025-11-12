@@ -1,34 +1,37 @@
-﻿using tasktracker.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using tasktracker.Enums;
 
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// DTO query filter model for Task
+    /// DTO model to update a task
     /// </summary>
-    public class TaskQueryFilter
+    public class UpdateTaskDto : HandlingDto
     {
         /// <summary>
-        /// Query on task title field
+        /// Task title
         /// </summary>
+        [MaxLength(50)]
         public string? Title { get; set; }
 
         /// <summary>
-        /// Query on task description field
+        /// Task description
         /// </summary>
+        [MaxLength(240)]
         public string? Description { get; set; }
 
         /// <summary>
-        /// Query on task project ID field
+        /// Task additional comment
         /// </summary>
-        public int? ProjectId { get; set; }
+        public string? Comment { get; set; }
 
         /// <summary>
-        /// Query on task user ID field
+        /// Task associated user ID
         /// </summary>
         public int? UserId { get; set; }
 
         /// <summary>
-        /// Query on task status field
+        /// Task status
         /// </summary>
         public StatusEnum? Status { get; set; }
     }

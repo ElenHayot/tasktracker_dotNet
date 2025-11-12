@@ -21,12 +21,39 @@ namespace tasktracker.Mappers
                 Name = dto.Name,
                 Firstname = dto.Firstname,
                 Email = dto.Email,
+                Phone = dto.Phone,
                 Role = dto.Role,
                 PasswordHash = PasswordHelper.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                CreatedBy = "0",
-                UpdatedBy = "0"
+                CreatedBy = dto.CreatedBy ?? "0",
+                UpdatedBy = dto.UpdatedBy ?? "0"
+            };
+        }
+
+        /// <summary>
+        /// Mapper UpdateUserDto -> UserEntity
+        /// </summary>
+        /// <param name="existingUser">Existing user in DB</param>
+        /// <param name="updatedUser">New data to set</param>
+        /// <returns>UserEntity object</returns>
+        public static UserEntity ToUpdateUser(UserEntity existingUser, UpdateUserDto updatedUser)
+        {
+            string LocalPasswordHash = updatedUser.Password != null ? PasswordHelper.HashPassword(updatedUser.Password) : existingUser.PasswordHash;
+            return new UserEntity
+            {
+                Id = existingUser.Id,
+                Name = existingUser.Name,
+                Firstname = existingUser.Firstname,
+                Email = updatedUser.Email ?? existingUser.Email,
+                Phone = updatedUser.Phone ?? existingUser.Phone,
+                Role = updatedUser.Role ?? existingUser.Role,
+                PasswordHash = LocalPasswordHash,
+                TaskIds = updatedUser.TaskIds ?? existingUser.TaskIds,
+                CreatedAt = existingUser.CreatedAt,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedBy = existingUser.CreatedBy,
+                UpdatedBy = updatedUser.UpdatedBy
             };
         }
 
@@ -43,10 +70,14 @@ namespace tasktracker.Mappers
                 Name = dto.Name,
                 Firstname = dto.Firstname,
                 Email = dto.Email,
+                Phone = dto.Phone,
                 Role = dto.Role,
                 PasswordHash = PasswordHelper.HashPassword(dto.Password),
-                UpdatedAt = DateTime.UtcNow,
-                UpdatedBy = dto.Id.ToString()
+                TaskIds = dto.TaskIds,
+                CreatedAt = dto.CreatedAt,
+                UpdatedAt = dto.UpdatedAt,
+                CreatedBy = dto.CreatedBy,
+                UpdatedBy = dto.UpdatedBy
             };
         }
 
@@ -63,8 +94,10 @@ namespace tasktracker.Mappers
                 Name = entity.Name,
                 Firstname = entity.Firstname,
                 Email = entity.Email,
+                Phone = entity.Phone,
                 Role = entity.Role,
                 Password = "",
+                TaskIds = entity.TaskIds,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 CreatedBy = entity.CreatedBy,

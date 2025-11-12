@@ -37,7 +37,7 @@ namespace tasktracker.Services
         /// <param name="id">The project's ID to update</param>
         /// <param name="updatedProject">New datas</param>
         /// <returns>The updated project DTO</returns>
-        Task<ProjectDto> UpdateProjectAsync(int id, CreateProjectDto updatedProject);
+        Task<ProjectDto> UpdateProjectAsync(int id, UpdateProjectDto updatedProject);
 
         /// <summary>
         /// Delete an existing project

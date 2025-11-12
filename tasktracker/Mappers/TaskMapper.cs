@@ -19,34 +19,38 @@ namespace tasktracker.Mappers
             {
                 Title = dto.Title,
                 Description = dto.Description,
+                Comment = dto.Comment,
                 ProjectId = dto.ProjectId,
                 UserId = dto.UserId,
                 Status = dto.Status,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                CreatedBy = "0",
-                UpdatedBy = "0"
+                CreatedBy = dto.CreatedBy ?? "0",
+                UpdatedBy = dto.UpdatedBy ?? "0"
             };
         }
 
         /// <summary>
-        /// Mapper CreateTaskDto -> TaskEntity for updates
+        /// Mapper UpdateTaskDto -> TaskEntity for updates
         /// </summary>
-        /// <param name="dto">dto to map</param>
+        /// <param name="existingTask">Existing task in DB</param>
+        /// <param name="updatedTask">New data to set</param>
         /// <returns>TaskEntity object</returns>
-        public static TaskEntity ToUpdateEntity(CreateTaskDto dto)
+        public static TaskEntity ToUpdateEntity(TaskEntity existingTask, UpdateTaskDto updatedTask)
         {
             return new TaskEntity
             {
-                Title = dto.Title,
-                Description = dto.Description,
-                ProjectId = dto.ProjectId,
-                UserId = dto.UserId,
-                Status = dto.Status,
-                CreatedAt = dto.CreatedAt,
+                Id = existingTask.Id,
+                Title = updatedTask.Title ?? existingTask.Title,
+                Description = updatedTask.Description ?? existingTask.Description,
+                Comment = updatedTask.Comment ?? existingTask.Comment,
+                ProjectId = existingTask.ProjectId,
+                UserId = updatedTask.UserId ?? existingTask.UserId,
+                Status = updatedTask.Status ?? existingTask.Status,
+                CreatedAt = existingTask.CreatedAt,
                 UpdatedAt = DateTime.UtcNow,
-                CreatedBy = dto.UpdatedBy,
-                UpdatedBy = "0"
+                CreatedBy = existingTask.CreatedBy,
+                UpdatedBy = updatedTask.UpdatedBy
             };
         }
 
@@ -62,6 +66,7 @@ namespace tasktracker.Mappers
                 Id = dto.Id,
                 Title = dto.Title,
                 Description = dto.Description,
+                Comment = dto.Comment,
                 ProjectId = dto.ProjectId,
                 UserId = dto.UserId,
                 Status = dto.Status,
@@ -84,6 +89,7 @@ namespace tasktracker.Mappers
                 Id = entity.Id,
                 Title = entity.Title,
                 Description = entity.Description,
+                Comment = entity.Comment,
                 ProjectId = entity.ProjectId,
                 UserId = entity.UserId,
                 Status = entity.Status,

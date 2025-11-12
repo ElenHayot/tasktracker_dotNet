@@ -8,21 +8,45 @@ namespace tasktracker.DtoModels
     /// </summary>
     public class TaskDto : HandlingDto
     {
+        /// <summary>
+        /// Task ID
+        /// </summary>
         [Required]
         public required int Id { get; set; }
 
+        /// <summary>
+        /// Task title
+        /// </summary>
         [Required]
         [MaxLength(50)]
         public required string Title { get; set; }
 
+        /// <summary>
+        /// Task description
+        /// </summary>
         [MaxLength(240)]
         public string? Description { get; set; }
 
+        /// <summary>
+        /// Task additional comment
+        /// </summary>
+        [MaxLength(150)]
+        public string? Comment { get; set; }
+
+        /// <summary>
+        /// Task associated project (ID)
+        /// </summary>
         [Required]
         public required int ProjectId { get; set; }
 
-        public int? UserId { get; set; } = 0;
+        /// <summary>
+        /// Task associated user (ID)
+        /// </summary>
+        public int UserId { get; set; } = 0;
 
+        /// <summary>
+        /// Task status - default "Undefined"
+        /// </summary>
         [Required]
         public required StatusEnum Status { get; set; } = StatusEnum.Undefined;
     }

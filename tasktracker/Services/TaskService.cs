@@ -1,9 +1,11 @@
-﻿using tasktracker.DtoModels;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
+using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
+using tasktracker.Exceptions;
 using tasktracker.Mappers;
 using tasktracker.Repositories;
-using tasktracker.Exceptions;
 
 namespace tasktracker.Services
 {
@@ -18,21 +20,69 @@ namespace tasktracker.Services
         private readonly ITaskRepository _taskRepository;
 
         /// <summary>
+        /// Local project repository instance
+        /// </summary>
+        private readonly IProjectRepository _projectRepository;
+
+        /// <summary>
+        /// Local user repository instance
+        /// </summary>
+        private readonly IUserRepository _userRepository;
+
+        /// <summary>
+        /// Local logger instance for TaskService
+        /// </summary>
+        private readonly ILogger<TaskService> _logger;
+
+        /// <summary>
         /// TaskService constructor
         /// </summary>
         /// <param name="taskRepository">Task repository instance</param>
-        public TaskService(ITaskRepository taskRepository)
+        /// <param name="projectRepository">Project repository instance</param>
+        /// <param name="userRepository">User repository instance</param>
+        /// <param name="logger">Task service logger instance</param>
+        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, IUserRepository userRepository, ILogger<TaskService> logger)
         {
             _taskRepository = taskRepository;
+            _projectRepository = projectRepository;
+            _userRepository = userRepository;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
         public async Task<TaskDto> CreateTaskAsync(CreateTaskDto task)
         {
-            TaskEntity taskToAdd = TaskMapper.ToCreateEntity(task);
-            taskToAdd = await _taskRepository.CreateTaskAsync(taskToAdd);
-            TaskDto createdTask = TaskMapper.ToDto(taskToAdd);
-            return createdTask;
+            // Verify existing project
+            ProjectEntity? existingProject = await _projectRepository.GetProjectByIdAsync(task.ProjectId);
+            if (existingProject == null)
+            {
+                throw new AssociatedProjectNotFound($"Project ID '{task.ProjectId}' not found. Task must be affected to a valid project.");
+            }
+
+            // Verify existing user
+            UserEntity? existingUser = await _userRepository.GetUserByIdAsync(task.UserId);
+
+            if (task.UserId != 0 && existingUser == null)
+            {
+                throw new AssociatedUserNotFound($"User ID '{task.UserId}' not found. Associated user must exist. Set 0 to associate no user.");
+            }
+
+            // Add task in DB
+            TaskEntity newTaskEntity = TaskMapper.ToCreateEntity(task);
+            // Get newTaskEntity to know the new task ID
+            newTaskEntity = await _taskRepository.CreateTaskAsync(newTaskEntity);
+            TaskDto createdTaskDto = TaskMapper.ToDto(newTaskEntity);
+
+            // Add task ID to project.TaskIds
+            await AddTaskToProject(createdTaskDto.Id, existingProject);
+
+            // Add task ID to user.TaskIds
+            if (existingUser != null)
+            {
+                await AddTaskToUser(createdTaskDto.Id, existingUser);
+            }
+
+            return createdTaskDto;
         }
 
         /// <inheritdoc/>
@@ -44,6 +94,22 @@ namespace tasktracker.Services
                 throw new NotFoundException($"Task with id '{id}' not found.");
             }
 
+            // Update associated project TaskIds list
+            // if existingProject == null -> add log info and continue
+            ProjectEntity? existingProject = await _projectRepository.GetProjectByIdAsync(task.ProjectId);
+            if (existingProject != null)
+            {
+                await RemoveTaskFromProject(task.Id, existingProject);
+            }
+
+            // Update associated user TaskIds list if userId != 0
+            UserEntity? associatedUser = await _userRepository.GetUserByIdAsync(task.UserId);
+            if (associatedUser != null)
+            {
+                await RemoveTaskFromUser(task.Id, associatedUser);
+            }
+
+            // Delete task in DB
             bool deleted = await _taskRepository.DeleteTaskAsync(task);
             if (!deleted)
             {
@@ -84,30 +150,98 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TaskDto> UpdateTaskAsync(int id, CreateTaskDto updatedTask)
+        public async Task<TaskDto> UpdateTaskAsync(int id, UpdateTaskDto updatedTask)
         {
-            TaskEntity? existingTask = await _taskRepository.GetTaskByIdAsync(id);
-            if (existingTask == null)
+            TaskEntity? existingEntity = await _taskRepository.GetTaskByIdAsync(id);
+            if (existingEntity == null)
             {
                 throw new NotFoundException($"Task with id '{id}' not found.");
             }
 
-            TaskEntity updatedEntity = new()
-            {
-                Id = id,
-                Title = updatedTask.Title,
-                Description = updatedTask.Description,
-                ProjectId = updatedTask.ProjectId,
-                UserId = updatedTask.UserId,
-                Status = updatedTask.Status,
-                CreatedAt = existingTask.CreatedAt,
-                UpdatedAt = DateTime.UtcNow,
-                CreatedBy = existingTask.CreatedBy,
-                UpdatedBy = updatedTask.UpdatedBy
-            };
 
-            updatedEntity = await _taskRepository.UpdateTaskAsync(existingTask, updatedEntity);
+            // Build new task data object
+            TaskEntity updatedEntity = TaskMapper.ToUpdateEntity(existingEntity, updatedTask);
+
+            // Update TaskIds list for user if different UserId
+            if (existingEntity.UserId != updatedEntity.UserId)
+            {
+                // Remove from old user if old user != 0
+                if (existingEntity.UserId != 0)
+                {
+                    UserEntity? oldAssociatedUser = await _userRepository.GetUserByIdAsync(existingEntity.UserId);
+
+                    if (oldAssociatedUser != null)
+                    {
+                        await RemoveTaskFromUser(existingEntity.Id, oldAssociatedUser);
+                    }
+                    else
+                        _logger.LogInformation($"RemoveTaskFromUser : User with id '{existingEntity.UserId} not found - ignored");
+                }
+
+                // Add to new user if new user != 0
+                if (updatedEntity.UserId != 0)
+                {
+                    UserEntity? newAssociatedUser = await _userRepository.GetUserByIdAsync(updatedEntity.UserId);
+                    if (newAssociatedUser == null)
+                    {
+                        throw new AssociatedUserNotFound($"User ID '{updatedEntity.UserId}' not found. Associated user must exist. Set 0 to associate no user.");
+                    }
+
+                    await AddTaskToUser(updatedEntity.Id, newAssociatedUser);
+                }
+            }
+
+            await _taskRepository.UpdateTaskAsync(existingEntity, updatedEntity);
+
             return TaskMapper.ToDto(updatedEntity);
+        }
+
+        /// <summary>
+        /// Remove a task ID from a user TaskIds list
+        /// </summary>
+        /// <param name="taskId">Task ID to remove</param>
+        /// <param name="user">User to update</param>
+        /// <returns></returns>
+        private async Task RemoveTaskFromUser(int taskId, UserEntity user)
+        {
+            user.TaskIds?.Remove(taskId);
+            await _userRepository.SaveUpdatesAsync(user);
+        }
+
+        /// <summary>
+        /// Add a task ID to a user TaskIds list
+        /// </summary>
+        /// <param name="taskId">Task ID to add</param>
+        /// <param name="user">User to update</param>
+        /// <returns></returns>
+        private async Task AddTaskToUser(int taskId, UserEntity user)
+        {
+            user.TaskIds?.Add(taskId);
+            await _userRepository.SaveUpdatesAsync(user);
+        }
+
+        /// <summary>
+        /// Remove a task ID from a project TaskIds list
+        /// </summary>
+        /// <param name="taskId">Task ID to remove</param>
+        /// <param name="project">Projec to update</param>
+        /// <returns></returns>
+        private async Task RemoveTaskFromProject(int taskId, ProjectEntity project)
+        {
+            project.TaskIds?.Remove(taskId);
+            await _projectRepository.SaveUpdatesAsync(project);
+        }
+
+        /// <summary>
+        /// Add a task ID to a project TaskIds list
+        /// </summary>
+        /// <param name="taskId">Task ID to add</param>
+        /// <param name="project">Project to update</param>
+        /// <returns></returns>
+        private async Task AddTaskToProject(int taskId, ProjectEntity project)
+        {
+            project.TaskIds?.Add(taskId);
+            await _projectRepository.SaveUpdatesAsync(project);
         }
     }
 }

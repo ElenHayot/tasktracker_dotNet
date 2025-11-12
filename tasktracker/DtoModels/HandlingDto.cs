@@ -5,9 +5,24 @@
     /// </summary>
     public class HandlingDto
     {
+        /// <summary>
+        /// Creation datetime
+        /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        
+        /// <summary>
+        /// Creator ID
+        /// </summary>
         public string? CreatedBy { get; set; }
+        
+        /// <summary>
+        /// Updating datetime
+        /// </summary>
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        
+        /// <summary>
+        /// Updator ID
+        /// </summary>
         public string? UpdatedBy { get; set; }
     }
 }

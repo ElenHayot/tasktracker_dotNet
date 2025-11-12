@@ -68,5 +68,11 @@ namespace tasktracker.Repositories
             await _context.SaveChangesAsync();
             return updatedTask;
         }
+
+        /// <inheritdoc/>
+        public async Task SaveUpdatesAsync(TaskEntity task)
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

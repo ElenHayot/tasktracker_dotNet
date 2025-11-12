@@ -43,5 +43,12 @@ namespace tasktracker.Repositories
         /// <param name="project">Project to delete</param>
         /// <returns>true/false</returns>
         Task<bool> DeleteProjectAsync(ProjectEntity project);
+
+        /// <summary>
+        /// Save changes when changes done in service
+        /// </summary>
+        /// <param name="project">Project to update</param>
+        /// <returns>Nothing</returns>
+        Task SaveUpdatesAsync(ProjectEntity project);
     }
 }

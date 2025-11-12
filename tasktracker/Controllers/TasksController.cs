@@ -70,7 +70,7 @@ namespace tasktracker.Controllers
         /// <param name="updates">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateTask(int id, [FromBody] CreateTaskDto updates)
+        public async Task<ActionResult> UpdateTask(int id, [FromBody] UpdateTaskDto updates)
         {
             return Ok(await _taskService.UpdateTaskAsync(id, updates));
         }

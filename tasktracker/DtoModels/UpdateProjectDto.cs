@@ -4,22 +4,15 @@ using tasktracker.Enums;
 namespace tasktracker.DtoModels
 {
     /// <summary>
-    /// DTO model Project
+    /// DTO model to update a project
     /// </summary>
-    public class ProjectDto : HandlingDto
+    public class UpdateProjectDto : HandlingDto
     {
-        /// <summary>
-        /// Project ID
-        /// </summary>
-        [Required]
-        public required int Id { get; set; }
-
         /// <summary>
         /// Project title
         /// </summary>
-        [Required]
         [MaxLength(50)]
-        public required string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Project description
@@ -36,12 +29,11 @@ namespace tasktracker.DtoModels
         /// <summary>
         /// Project status - default "Undefined"
         /// </summary>
-        [Required]
-        public required StatusEnum Status { get; set; } = StatusEnum.Undefined;
+        public StatusEnum? Status { get; set; }
 
         /// <summary>
         /// Project associated tasks (IDs)
         /// </summary>
-        public List<int>? TaskIds { get; set; } = [];
+        public List<int>? TaskIds { get; set; }
     }
 }
