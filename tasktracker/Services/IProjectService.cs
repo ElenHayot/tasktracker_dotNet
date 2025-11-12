@@ -43,7 +43,11 @@ namespace tasktracker.Services
         /// Delete an existing project
         /// </summary>
         /// <param name="id">The project's ID to delete</param>
+        /// <param name="forceTaskDeleting">
+        /// When true, delete all associated tasks whatever the task.Status value
+        /// When false, stop and send an error if one associated task.Status != "Completed", "Closed", "Undefined"
+        /// </param>
         /// <returns>true/false</returns>
-        Task<bool> DeleteProjectAsync(int id);
+        Task<bool> DeleteProjectAsync(int id,  bool forceTaskDeleting);
     }
 }

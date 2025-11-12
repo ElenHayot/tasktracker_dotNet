@@ -18,6 +18,11 @@ namespace tasktracker.Services
         private readonly IProjectRepository _projectRepository;
 
         /// <summary>
+        /// Local task repository instance
+        /// </summary>
+        private readonly ITaskRepository _taskRepository;
+
+        /// <summary>
         /// Local logger instance for ProjectService
         /// </summary>
         private readonly ILogger<ProjectService> _logger;
@@ -26,10 +31,12 @@ namespace tasktracker.Services
         /// ProjectService constructor
         /// </summary>
         /// <param name="projectRepository">Project repository instance</param>
+        /// <param name="taskRepository">Task repository instance</param>
         /// <param name="logger">Project service logger instance</param>
-        public ProjectService(IProjectRepository projectRepository, ILogger<ProjectService> logger)
+        public ProjectService(IProjectRepository projectRepository, ITaskRepository taskRepository, ILogger<ProjectService> logger)
         {
             _projectRepository = projectRepository;
+            _taskRepository = taskRepository;
             _logger = logger;
         }
 
@@ -44,14 +51,44 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteProjectAsync(int id)
+        public async Task<bool> DeleteProjectAsync(int id, bool forceTaskDeleting = false)
         {
             ProjectEntity? projectEntity = await _projectRepository.GetProjectByIdAsync(id);
             if (projectEntity == null)
             {
-                throw new NotFoundException($"Project with id {id} not foud");
+                throw new NotFoundException($"Project with id {id} not found");
             }
 
+            // Get all associated tasks
+            IEnumerable<TaskEntity> associatedTasks = await _taskRepository.GetAllTasksFilteredAsync(new() { ProjectId = id });
+
+            if (!forceTaskDeleting)
+            {
+                // Check if all tasks.Status are in ("Completed", "Closed", "Undefined")
+                // Get all uncompleted associated tasks
+                List<TaskEntity> uncompletedTasksList = associatedTasks.Where(x => x.Status != StatusEnum.Completed && x.Status != StatusEnum.Undefined).ToList();
+
+                if (uncompletedTasksList.Any())
+                {
+                    throw new UncompletedTasksAssociated("There are still uncompleted associated tasks to the project. All associated tasks must be at a completed status.");
+                }
+                else
+                {
+                    // If all tasks are completed, delete all associated tasks before deleting the project
+                    foreach (TaskEntity task in uncompletedTasksList)
+                    {
+                        await _taskRepository.DeleteTaskAsync(task);
+                    }
+                }
+            }
+            else
+            {
+                // Delete all associated tasks, whatever the task.Status
+                foreach (TaskEntity task in associatedTasks)
+                    await _taskRepository.DeleteTaskAsync(task);
+            }
+
+            // Delete project
             bool deleted = await _projectRepository.DeleteProjectAsync(projectEntity);
             if (!deleted)
             {

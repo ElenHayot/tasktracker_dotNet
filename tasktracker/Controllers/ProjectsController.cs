@@ -79,11 +79,12 @@ namespace tasktracker.Controllers
         /// Call Service.DeleteProjectAsync
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
+        /// <param name="forceTaskDeleting">FromQuery parameter - boolean</param>
         /// <returns>Ok/Nok result</returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(int id)
+        public async Task<IActionResult> DeleteProject(int id, [FromQuery] bool forceTaskDeleting = false)
         {
-            bool deleted = await _projectService.DeleteProjectAsync(id);
+            bool deleted = await _projectService.DeleteProjectAsync(id, forceTaskDeleting);
             return Ok(deleted);
         }
     }
