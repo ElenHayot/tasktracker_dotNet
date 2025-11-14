@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tasktracker", "tasktracker\tasktracker.csproj", "{C539E442-0D7B-4DA6-BD1C-031F3F56F150}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasktracker.Tests", "Tasktracker.Tests\Tasktracker.Tests.csproj", "{EE601BA0-FD73-42D4-8495-D343121B4FAD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C539E442-0D7B-4DA6-BD1C-031F3F56F150} = {C539E442-0D7B-4DA6-BD1C-031F3F56F150}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{C539E442-0D7B-4DA6-BD1C-031F3F56F150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C539E442-0D7B-4DA6-BD1C-031F3F56F150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C539E442-0D7B-4DA6-BD1C-031F3F56F150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE601BA0-FD73-42D4-8495-D343121B4FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE601BA0-FD73-42D4-8495-D343121B4FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE601BA0-FD73-42D4-8495-D343121B4FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE601BA0-FD73-42D4-8495-D343121B4FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

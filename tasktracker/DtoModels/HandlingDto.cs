@@ -8,7 +8,7 @@
         /// <summary>
         /// Creation datetime
         /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
         
         /// <summary>
         /// Creator ID
@@ -18,7 +18,7 @@
         /// <summary>
         /// Updating datetime
         /// </summary>
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; }
         
         /// <summary>
         /// Updator ID

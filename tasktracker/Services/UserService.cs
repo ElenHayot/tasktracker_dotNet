@@ -48,6 +48,13 @@ namespace tasktracker.Services
         /// <inheritdoc/>
         public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
         {
+            // Unique email
+            var existingEmail = await _userRepository.GetUserByEmailAsync(userDto.Email);
+            if (existingEmail != null)
+            {
+                throw new EmailAlreadyExistsException($"A user with this email already exists.");
+            }
+
             UserEntity userEntity = UserMapper.ToCreateEntity(userDto);
             UserEntity createdUser = await _userRepository.CreateUserAsync(userEntity);
             UserDto user = UserMapper.ToDto(createdUser);
