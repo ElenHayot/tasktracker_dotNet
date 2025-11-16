@@ -15,6 +15,9 @@ using tasktracker.Services;
 
 namespace Tasktracker.Tests.UsersUnitTests
 {
+    /// <summary>
+    /// Class to test UserService Creating part 
+    /// </summary>
     public class UsersCreateUnitTests : UserServiceTestBase
     {
         /// <summary>
@@ -59,6 +62,8 @@ namespace Tasktracker.Tests.UsersUnitTests
             Assert.NotNull(result);
             Assert.Equal("Doe", result.Name);
             Assert.Equal(1, result.Id);
+
+            MockUserRepo.Verify(repo => repo.CreateUserAsync(It.IsAny<UserEntity>()), Times.Once());
         }
 
         /// <summary>

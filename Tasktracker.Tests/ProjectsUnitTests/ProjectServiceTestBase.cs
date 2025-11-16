@@ -8,29 +8,29 @@ using System.Threading.Tasks;
 using tasktracker.Repositories;
 using tasktracker.Services;
 
-namespace Tasktracker.Tests.UsersUnitTests
+namespace Tasktracker.Tests.ProjectsUnitTests
 {
     /// <summary>
     /// Mock initialisation class
     /// </summary>
-    public abstract class UserServiceTestBase
+    public abstract class ProjectServiceTestBase
     {
         #region Mock instancies
-        protected readonly Mock<IUserRepository> MockUserRepo;
+        protected readonly Mock<IProjectRepository> MockProjectRepo;
         protected readonly Mock<ITaskRepository> MockTaskRepo;
-        protected readonly Mock<ILogger<UserService>> MockUserLogger;
-        protected readonly UserService UserService;
+        protected readonly Mock<ILogger<ProjectService>> MockProjectLogger;
+        protected readonly ProjectService ProjectService;
         #endregion
 
         /// <summary>
         /// Constructor with mock objects
         /// </summary>
-        protected UserServiceTestBase()
+        public ProjectServiceTestBase()
         {
-            MockUserRepo = new Mock<IUserRepository>();
+            MockProjectRepo = new Mock<IProjectRepository>();
             MockTaskRepo = new Mock<ITaskRepository>();
-            MockUserLogger = new Mock<ILogger<UserService>>();
-            UserService = new UserService(MockUserRepo.Object, MockTaskRepo.Object, MockUserLogger.Object);
+            MockProjectLogger = new Mock<ILogger<ProjectService>>();
+            ProjectService = new ProjectService(MockProjectRepo.Object, MockTaskRepo.Object, MockProjectLogger.Object);
         }
     }
 }
