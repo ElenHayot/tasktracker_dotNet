@@ -25,7 +25,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         public async Task GetAllUsersFilteredAsync_WithoutFilter_ShouldWork()
         {
             // Entities
-            var allUsers = new List<UserEntity>()
+            List<UserEntity> allUsers = new()
             {
                 new UserEntity(){ Id = 1, Name = "One", Firstname = "User", Email = "oneuser@example.com", Role = RolesEnum.Admin, PasswordHash = ""},
                 new UserEntity(){ Id = 2, Name = "Two", Firstname = "User", Email = "twouser@example.com", Role = RolesEnum.User, PasswordHash = ""},
@@ -37,7 +37,7 @@ namespace Tasktracker.Tests.UsersUnitTests
                 .Setup(repo => repo.GetAllUsersFilteredAsync(It.IsAny<UserQueryFilter>()))
                 .ReturnsAsync(allUsers);
 
-            var result = await UserService.GetAllUsersFilteredAsync(null, null, null, null);
+            IEnumerable<UserDto> result = await UserService.GetAllUsersFilteredAsync(null, null, null, null);
 
             Assert.NotNull(result);
             Assert.Equal(3, result.Count());
@@ -64,7 +64,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         public async Task GetAllUsersFilteredAsync_WithRoleFilter_ShouldWork(string? name, string? firstname, string? phone, RolesEnum? role)
         {
             // Entities
-            var allUsers = new List<UserEntity>()
+            List<UserEntity> allUsers = new()
             {
                 new UserEntity(){ Id = 1, Name = "One", Firstname = "User", Email = "oneuser@example.com", Phone = "0123456789", Role = RolesEnum.Admin, PasswordHash = ""},
                 new UserEntity(){ Id = 2, Name = "Two", Firstname = "User", Email = "twouser@example.com", Role = RolesEnum.User, PasswordHash = ""},
@@ -76,7 +76,7 @@ namespace Tasktracker.Tests.UsersUnitTests
                 .Setup(repo => repo.GetAllUsersFilteredAsync(It.IsAny<UserQueryFilter>()))
                 .ReturnsAsync(allUsers);
 
-            var result = await UserService.GetAllUsersFilteredAsync(name, firstname, phone, role);
+            IEnumerable<UserDto> result = await UserService.GetAllUsersFilteredAsync(name, firstname, phone, role);
             Assert.NotNull(result);
 
             MockUserRepo.Verify(repo => repo.GetAllUsersFilteredAsync(It.IsAny<UserQueryFilter>()), Times.Once());
@@ -89,7 +89,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task GetUserByIdAsync_ShouldWork()
         {
-            var user = new UserEntity()
+            UserEntity user = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -104,7 +104,7 @@ namespace Tasktracker.Tests.UsersUnitTests
                 .Setup(repo => repo.GetUserByIdAsync(user.Id))
                 .ReturnsAsync(user);
 
-            var result = await UserService.GetUserByIdAsync(user.Id);
+            UserDto result = await UserService.GetUserByIdAsync(user.Id);
 
             Assert.NotNull(result);
             Assert.Equal("Doe", result.Name);
@@ -136,7 +136,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task GetUserByEmailAsync_ShouldWork()
         {
-            var user = new UserEntity()
+            UserEntity user = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -151,7 +151,7 @@ namespace Tasktracker.Tests.UsersUnitTests
                 .Setup(repo => repo.GetUserByEmailAsync(user.Email))
                 .ReturnsAsync(user);
 
-            var result = await UserService.GetUserByEmailAsync(user.Email);
+            UserDto result = await UserService.GetUserByEmailAsync(user.Email);
 
             Assert.NotNull(result);
             Assert.Equal("Doe", result.Name);

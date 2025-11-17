@@ -23,7 +23,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task UpdateUserAsync_ShouldWork()
         {
-            var user = new UserEntity()
+            UserEntity user = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -34,14 +34,14 @@ namespace Tasktracker.Tests.UsersUnitTests
                 PasswordHash = ""
             };
 
-            var updatedUserDto = new UpdateUserDto()
+            UpdateUserDto updatedUserDto = new()
             {
                 Email = "changedEmail@example.com",
                 Phone = "0199999999",
                 Role = RolesEnum.User
             };
 
-            var expectedUser = new UserEntity()
+            UserEntity expectedUser = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -55,7 +55,7 @@ namespace Tasktracker.Tests.UsersUnitTests
             MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
             MockUserRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>(), It.IsAny<UserEntity>())).ReturnsAsync(expectedUser);
 
-            var result = await UserService.UpdateUserAsync(user.Id, updatedUserDto);
+            UserDto result = await UserService.UpdateUserAsync(user.Id, updatedUserDto);
 
             Assert.NotNull(result);
             Assert.Equal("changedEmail@example.com", result.Email);
@@ -72,7 +72,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task UpdateUserAsync_WithNoUpdate_ShouldWork()
         {
-            var user = new UserEntity()
+            UserEntity user = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -83,13 +83,10 @@ namespace Tasktracker.Tests.UsersUnitTests
                 PasswordHash = ""
             };
 
-            // Empty UpdateUserDto to update nothing
-            var updatedUserDto = new UpdateUserDto();
-
             MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
             MockUserRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>(), It.IsAny<UserEntity>())).ReturnsAsync(user);
 
-            var result = await UserService.UpdateUserAsync(user.Id, updatedUserDto);
+            UserDto result = await UserService.UpdateUserAsync(user.Id, new UpdateUserDto());
 
             Assert.NotNull(result);
             Assert.Equal(user.Email, result.Email);

@@ -22,7 +22,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task DeleteUserAsync_ShoudlWork()
         {
-            var user = new UserEntity()
+            UserEntity user = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -36,7 +36,7 @@ namespace Tasktracker.Tests.UsersUnitTests
             MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
             MockUserRepo.Setup(repo => repo.DeleteUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
 
-            var result = await UserService.DeleteUserAsync(user.Id);
+            bool result = await UserService.DeleteUserAsync(user.Id);
             Assert.True(result);
 
             MockUserRepo.Verify(repo => repo.GetUserByIdAsync(It.IsAny<int>()), Times.Once());

@@ -30,7 +30,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         {
 
             // Input DTO
-            var inputDto = new CreateUserDto()
+            CreateUserDto inputDto = new()
             {
                 Name = "Doe",
                 Firstname = "John",
@@ -40,7 +40,7 @@ namespace Tasktracker.Tests.UsersUnitTests
             };
 
             // Expected entity to be returned
-            var expectedEntity = new UserEntity()
+            UserEntity expectedEntity = new()
             {
                 Id = 1,
                 Name = "Doe",
@@ -56,7 +56,7 @@ namespace Tasktracker.Tests.UsersUnitTests
                 .ReturnsAsync(expectedEntity);  // "Alors retourne cette entité"
 
             // Call the method
-            var result = await UserService.CreateUserAsync(inputDto);
+            UserDto result = await UserService.CreateUserAsync(inputDto);
 
             // Expected result
             Assert.NotNull(result);
@@ -73,7 +73,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task CreateUserAsync_WrongEmailType_ShouldNotWork()
         {
-            var inputDto = new CreateUserDto()
+            CreateUserDto inputDto = new()
             {
                 Name = "Doe",
                 Firstname = "John",
@@ -83,7 +83,7 @@ namespace Tasktracker.Tests.UsersUnitTests
             };
 
             // Expected entity to be returned
-            var expectedEntity = new UserEntity()
+            UserEntity expectedEntity = new()
             {
                 Id = 1,
                 Name = "Doe",
