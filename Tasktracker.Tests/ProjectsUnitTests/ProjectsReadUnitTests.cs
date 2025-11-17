@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.ProjectsUnitTests
 {
@@ -26,9 +27,9 @@ namespace Tasktracker.Tests.ProjectsUnitTests
             // Building fake datas
             List<ProjectEntity> projects = new()
             {
-                new ProjectEntity() { Id = 1, Title = "Test 1", Status = StatusEnum.New },
-                new ProjectEntity() { Id = 2, Title = "Test 2", Status = StatusEnum.Pending },
-                new ProjectEntity() { Id = 3, Title = "Test 3", Status = StatusEnum.Completed }
+                ProjectTestData.ProjectEntityData(1),
+                ProjectTestData.ProjectEntityData(2),
+                ProjectTestData.ProjectEntityData(3)
             };
 
             // Send back the projects list when asking
@@ -82,7 +83,7 @@ namespace Tasktracker.Tests.ProjectsUnitTests
         [Fact]
         public async Task GetProjectByIdAsync_ShouldWork()
         {
-            ProjectEntity project = new() { Id = 1, Title = "Test 1", Status = StatusEnum.New };
+            ProjectEntity project = ProjectTestData.ProjectEntityData();
 
             MockProjectRepo.Setup(repo => repo.GetProjectByIdAsync(project.Id)).ReturnsAsync(project);
 

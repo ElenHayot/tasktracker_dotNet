@@ -12,6 +12,7 @@ using tasktracker.Enums;
 using tasktracker.Exceptions;
 using tasktracker.Repositories;
 using tasktracker.Services;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.UsersUnitTests
 {
@@ -30,25 +31,10 @@ namespace Tasktracker.Tests.UsersUnitTests
         {
 
             // Input DTO
-            CreateUserDto inputDto = new()
-            {
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Role = RolesEnum.Admin,
-                Password = "StrongPassword...Isn'tIt?"
-            };
+            CreateUserDto inputDto = UserTestData.CreateUserData();
 
             // Expected entity to be returned
-            UserEntity expectedEntity = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Role = RolesEnum.Admin,
-                PasswordHash = PasswordHelper.HashPassword("StrongPassword...Isn'tIt?")
-            };
+            UserEntity expectedEntity = UserTestData.UserEntityData();
 
             // Configurer le comportement du mock pour ce test
             MockUserRepo
@@ -73,25 +59,10 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task CreateUserAsync_WrongEmailType_ShouldNotWork()
         {
-            CreateUserDto inputDto = new()
-            {
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Role = RolesEnum.Admin,
-                Password = "StrongPassword...Isn'tIt?"
-            };
+            CreateUserDto inputDto = UserTestData.CreateUserData();
 
             // Expected entity to be returned
-            UserEntity expectedEntity = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johhdoe@example.com",
-                Role = RolesEnum.Admin,
-                PasswordHash = PasswordHelper.HashPassword("StrongPassword...Isn'tIt?")
-            };
+            UserEntity expectedEntity = UserTestData.UserEntityData();
 
             // Simule que le user inputDto existe déjà
             MockUserRepo

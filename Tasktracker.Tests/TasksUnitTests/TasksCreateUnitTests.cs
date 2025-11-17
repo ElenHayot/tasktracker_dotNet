@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.TasksUnitTests
 {
@@ -23,27 +24,11 @@ namespace Tasktracker.Tests.TasksUnitTests
         [Fact]
         public async Task CreateTaskAsync_ShouldWork()
         {
-            ProjectEntity project = new()
-            {
-                Id = 1,
-                Title = "Test",
-                Status = StatusEnum.InProgress
-            };
+            ProjectEntity project = ProjectTestData.ProjectEntityData();
 
-            CreateTaskDto taskDto = new()
-            {
-                Title = "Test",
-                ProjectId = 1,
-                Status = StatusEnum.New
-            };
+            CreateTaskDto taskDto = TaskTestData.CreateTaskData();
 
-            TaskEntity expectedEntity = new()
-            {
-                Id = 1,
-                Title = "Test",
-                ProjectId = 1,
-                Status = StatusEnum.New
-            };
+            TaskEntity expectedEntity = TaskTestData.TaskEntityData();
 
             MockProjectRepo.Setup(repo => repo.GetProjectByIdAsync(project.Id)).ReturnsAsync(project);
             MockTaskRepo.Setup(repo => repo.CreateTaskAsync(It.IsAny<TaskEntity>())).ReturnsAsync(expectedEntity);
@@ -65,12 +50,8 @@ namespace Tasktracker.Tests.TasksUnitTests
         public async Task CreateTaskAsync_WithWrongProjectId_ShouldNotWork()
         {
             int badProjectId = 1;
-            CreateTaskDto taskDto = new()
-            {
-                Title = "Test",
-                ProjectId = badProjectId,
-                Status = StatusEnum.New
-            };
+            CreateTaskDto taskDto = TaskTestData.CreateTaskData();
+
             await Assert.ThrowsAsync<AssociatedProjectNotFound>(() =>  TaskService.CreateTaskAsync(taskDto));
 
             MockProjectRepo.Verify(repo => repo.GetProjectByIdAsync(badProjectId), Times.Once());
@@ -85,20 +66,9 @@ namespace Tasktracker.Tests.TasksUnitTests
         public async Task CreateTaskAsync_WithWrongUserId_ShouldNotWork()
         {
             int badUserId = 1;
-            ProjectEntity project = new()
-            {
-                Id = 1,
-                Title = "Test",
-                Status = StatusEnum.InProgress
-            };
+            ProjectEntity project = ProjectTestData.ProjectEntityData();
 
-            CreateTaskDto taskDto = new()
-            {
-                Title = "Test",
-                ProjectId = 1,
-                Status = StatusEnum.New,
-                UserId = badUserId
-            };
+            CreateTaskDto taskDto = TaskTestData.CreateTaskData(1, project.Id, badUserId);
 
             MockProjectRepo.Setup(repo => repo.GetProjectByIdAsync(project.Id)).ReturnsAsync(project);
 

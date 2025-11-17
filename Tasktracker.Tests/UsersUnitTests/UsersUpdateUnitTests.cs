@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.UsersUnitTests
 {
@@ -23,16 +24,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task UpdateUserAsync_ShouldWork()
         {
-            UserEntity user = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Phone = "0123456789",
-                Role = RolesEnum.Admin,
-                PasswordHash = ""
-            };
+            UserEntity existingUser = UserTestData.UserEntityData();
 
             UpdateUserDto updatedUserDto = new()
             {
@@ -43,25 +35,25 @@ namespace Tasktracker.Tests.UsersUnitTests
 
             UserEntity expectedUser = new()
             {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "changedEmail@example.com",
-                Phone = "0199999999",
-                Role = RolesEnum.User,
+                Id = existingUser.Id,
+                Name = existingUser.Name,
+                Firstname = existingUser.Firstname,
+                Email = updatedUserDto.Email ?? existingUser.Email,
+                Phone = updatedUserDto.Phone ?? existingUser.Phone,
+                Role = updatedUserDto.Role ?? existingUser.Role,
                 PasswordHash = ""
             };
 
-            MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
+            MockUserRepo.Setup(repo => repo.GetUserByIdAsync(existingUser.Id)).ReturnsAsync(existingUser);
             MockUserRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>(), It.IsAny<UserEntity>())).ReturnsAsync(expectedUser);
 
-            UserDto result = await UserService.UpdateUserAsync(user.Id, updatedUserDto);
+            UserDto result = await UserService.UpdateUserAsync(existingUser.Id, updatedUserDto);
 
             Assert.NotNull(result);
             Assert.Equal("changedEmail@example.com", result.Email);
             Assert.Equal(RolesEnum.User, result.Role);
 
-            MockUserRepo.Verify(repo => repo.GetUserByIdAsync(user.Id), Times.Once());
+            MockUserRepo.Verify(repo => repo.GetUserByIdAsync(existingUser.Id), Times.Once());
             MockUserRepo.Verify(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>(), It.IsAny<UserEntity>()), Times.Once());
         }
 
@@ -72,16 +64,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task UpdateUserAsync_WithNoUpdate_ShouldWork()
         {
-            UserEntity user = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Phone = "0123456789",
-                Role = RolesEnum.Admin,
-                PasswordHash = ""
-            };
+            UserEntity user = UserTestData.UserEntityData();
 
             MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
             MockUserRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>(), It.IsAny<UserEntity>())).ReturnsAsync(user);

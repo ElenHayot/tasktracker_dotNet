@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.TasksUnitTests
 {
@@ -25,8 +26,8 @@ namespace Tasktracker.Tests.TasksUnitTests
         {
             List<TaskEntity> tasks = new()
             {
-                new TaskEntity() { Id = 1, Title = "Test 1", ProjectId = 1, Status = StatusEnum.New },
-                new TaskEntity() { Id = 2, Title = "Test 2", ProjectId = 1, Status = StatusEnum.Pending }
+                TaskTestData.TaskEntityData(1, 1, 1),
+                TaskTestData.TaskEntityData(2, 1, 1)
             };
 
             MockTaskRepo.Setup(repo => repo.GetAllTasksFilteredAsync(It.IsAny<TaskQueryFilter>())).ReturnsAsync(tasks);
@@ -77,7 +78,7 @@ namespace Tasktracker.Tests.TasksUnitTests
         [Fact]
         public async Task GetTaskByIdAsync_ShouldWork()
         {
-            TaskEntity task = new() { Id = 1, Title = "Test 1", Description = "Test task", ProjectId = 1, UserId = 1, Status = StatusEnum.New };
+            TaskEntity task = TaskTestData.TaskEntityData();
 
             MockTaskRepo.Setup(repo => repo.GetTaskByIdAsync(task.Id)).ReturnsAsync(task);
 

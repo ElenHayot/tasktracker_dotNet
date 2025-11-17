@@ -9,6 +9,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.UsersUnitTests
 {
@@ -27,9 +28,9 @@ namespace Tasktracker.Tests.UsersUnitTests
             // Entities
             List<UserEntity> allUsers = new()
             {
-                new UserEntity(){ Id = 1, Name = "One", Firstname = "User", Email = "oneuser@example.com", Role = RolesEnum.Admin, PasswordHash = ""},
-                new UserEntity(){ Id = 2, Name = "Two", Firstname = "User", Email = "twouser@example.com", Role = RolesEnum.User, PasswordHash = ""},
-                new UserEntity(){ Id = 3, Name = "Three", Firstname = "User", Email = "threeuser@example.com", Role = RolesEnum.Moderator, PasswordHash = ""}
+                UserTestData.UserEntityData(1),
+                UserTestData.UserEntityData(2),
+                UserTestData.UserEntityData(3)
             };
 
             // Return allUsers list 
@@ -41,9 +42,9 @@ namespace Tasktracker.Tests.UsersUnitTests
 
             Assert.NotNull(result);
             Assert.Equal(3, result.Count());
-            Assert.Contains(result, user => user.Name == "One");
-            Assert.Contains(result, user => user.Name == "Two");
-            Assert.Contains(result, user => user.Name == "Three");
+            Assert.Contains(result, user => user.Email.Contains("1"));
+            Assert.Contains(result, user => user.Email.Contains("2"));
+            Assert.Contains(result, user => user.Email.Contains("3"));
 
             MockUserRepo.Verify(repo => repo.GetAllUsersFilteredAsync(It.IsAny<UserQueryFilter>()), Times.Once());
         }
@@ -89,16 +90,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task GetUserByIdAsync_ShouldWork()
         {
-            UserEntity user = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Phone = "0123456789",
-                Role = RolesEnum.Admin,
-                PasswordHash = ""
-            };
+            UserEntity user = UserTestData.UserEntityData();
 
             MockUserRepo
                 .Setup(repo => repo.GetUserByIdAsync(user.Id))
@@ -136,16 +128,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task GetUserByEmailAsync_ShouldWork()
         {
-            UserEntity user = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Phone = "0123456789",
-                Role = RolesEnum.Admin,
-                PasswordHash = ""
-            };
+            UserEntity user = UserTestData.UserEntityData();
 
             MockUserRepo
                 .Setup(repo => repo.GetUserByEmailAsync(user.Email))

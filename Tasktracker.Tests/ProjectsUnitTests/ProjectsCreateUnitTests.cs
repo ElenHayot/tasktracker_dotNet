@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.ProjectsUnitTests
 {
@@ -22,20 +23,9 @@ namespace Tasktracker.Tests.ProjectsUnitTests
         [Fact]
         public async Task CreateProjectAsync_ShouldWork()
         {
-            CreateProjectDto projectDto = new()
-            {
-                Title = "Test",
-                Description = "Test",
-                Status = StatusEnum.New
-            };
+            CreateProjectDto projectDto = ProjectTestData.CreateProjectData();
 
-            ProjectEntity expectedProject = new()
-            {
-                Id = 1,
-                Title = "Test",
-                Description = "Test",
-                Status = StatusEnum.New
-            };
+            ProjectEntity expectedProject = ProjectTestData.ProjectEntityData();
 
             MockProjectRepo
                 .Setup(repo => repo.CreateProjectAsync(It.IsAny<ProjectEntity>()))
@@ -43,7 +33,7 @@ namespace Tasktracker.Tests.ProjectsUnitTests
 
             ProjectDto result = await ProjectService.CreateProjectAsync(projectDto);
             Assert.NotNull(result);
-            Assert.Equal("Test", result.Title);
+            Assert.Equal(expectedProject.Id, result.Id);
 
             MockProjectRepo.Verify(repo => repo.CreateProjectAsync(It.IsAny<ProjectEntity>()), Times.Once());
         }

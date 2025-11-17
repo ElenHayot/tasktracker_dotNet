@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.TasksUnitTests
 {
@@ -23,9 +24,20 @@ namespace Tasktracker.Tests.TasksUnitTests
         [Fact]
         public async Task UpdateTaskAsync_ShouldWork()
         {
-            TaskEntity existingTask = new() { Id = 1, Title = "Test", ProjectId = 1, Status = StatusEnum.New };
-            UpdateTaskDto updatedTaskDto = new() { Description = "New description", Status = StatusEnum.Pending };
-            TaskEntity expectedTask = new() { Id = 1, Title = "Test", ProjectId = 1, Description = "New description", Status = StatusEnum.Pending };
+            TaskEntity existingTask = TaskTestData.TaskEntityData();
+            UpdateTaskDto updatedTaskDto = new() 
+            { 
+                Description = "New description", 
+                Status = StatusEnum.Pending 
+            };
+            TaskEntity expectedTask = new() 
+            { 
+                Id = existingTask.Id, 
+                Title = existingTask.Title, 
+                ProjectId = existingTask.ProjectId, 
+                Description = updatedTaskDto.Description ?? existingTask.Description, 
+                Status = updatedTaskDto.Status ?? existingTask.Status 
+            };
 
             MockTaskRepo.Setup(repo => repo.GetTaskByIdAsync(existingTask.Id)).ReturnsAsync(existingTask);
             MockTaskRepo.Setup(repo => repo.UpdateTaskAsync(It.IsAny<TaskEntity>(), It.IsAny<TaskEntity>())).ReturnsAsync(expectedTask);
@@ -46,7 +58,7 @@ namespace Tasktracker.Tests.TasksUnitTests
         [Fact]
         public async Task UpdateTaskAsync_WithNoUpdate_ShouldWork()
         {
-            TaskEntity existingTask = new() { Id = 1, Title = "Test", ProjectId = 1, Status = StatusEnum.New };
+            TaskEntity existingTask = TaskTestData.TaskEntityData();
             MockTaskRepo.Setup(repo => repo.GetTaskByIdAsync(existingTask.Id)).ReturnsAsync(existingTask);
             MockTaskRepo.Setup(repo => repo.UpdateTaskAsync(It.IsAny<TaskEntity>(), It.IsAny<TaskEntity>())).ReturnsAsync(existingTask);
 

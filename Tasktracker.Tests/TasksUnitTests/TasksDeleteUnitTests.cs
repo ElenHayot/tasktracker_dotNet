@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.TasksUnitTests
 {
@@ -22,7 +23,7 @@ namespace Tasktracker.Tests.TasksUnitTests
         [Fact]
         public async Task DeleteTaskAsync_ShouldWork()
         {
-            TaskEntity task = new() { Id = 1, Title = "Test", ProjectId = 1, UserId = 99, Status = StatusEnum.New };
+            TaskEntity task = TaskTestData.TaskEntityData();
             MockTaskRepo.Setup(repo => repo.GetTaskByIdAsync(task.Id)).ReturnsAsync(task);
             MockTaskRepo.Setup(repo => repo.DeleteTaskAsync(It.IsAny<TaskEntity>())).ReturnsAsync(true);
 

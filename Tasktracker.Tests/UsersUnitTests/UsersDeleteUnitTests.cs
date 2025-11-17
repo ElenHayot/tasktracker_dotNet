@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.UsersUnitTests
 {
@@ -22,16 +23,7 @@ namespace Tasktracker.Tests.UsersUnitTests
         [Fact]
         public async Task DeleteUserAsync_ShoudlWork()
         {
-            UserEntity user = new()
-            {
-                Id = 1,
-                Name = "Doe",
-                Firstname = "John",
-                Email = "johndoe@example.com",
-                Phone = "0123456789",
-                Role = RolesEnum.Admin,
-                PasswordHash = ""
-            };
+            UserEntity user = UserTestData.UserEntityData();
 
             MockUserRepo.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
             MockUserRepo.Setup(repo => repo.DeleteUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);

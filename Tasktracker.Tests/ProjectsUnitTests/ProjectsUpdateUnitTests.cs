@@ -8,6 +8,7 @@ using tasktracker.DtoModels;
 using tasktracker.Entities;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
+using Tasktracker.Tests.TestData;
 
 namespace Tasktracker.Tests.ProjectsUnitTests
 {
@@ -23,12 +24,7 @@ namespace Tasktracker.Tests.ProjectsUnitTests
         [Fact]
         public async Task UpdateProjectAsync_ShouldWork()
         {
-            ProjectEntity existingProject = new()
-            {
-                Id = 1,
-                Title = "Test 1",
-                Status = StatusEnum.New
-            };
+            ProjectEntity existingProject = ProjectTestData.ProjectEntityData();
 
             UpdateProjectDto updatedProjectDto = new()
             {
@@ -37,10 +33,10 @@ namespace Tasktracker.Tests.ProjectsUnitTests
 
             ProjectEntity expectedProject = new()
             {
-                Id = 1,
-                Title = "Test 1",
-                Description = "Add description",
-                Status = StatusEnum.New
+                Id = existingProject.Id,
+                Title = existingProject.Title,
+                Description = updatedProjectDto.Description ?? existingProject.Description,
+                Status = updatedProjectDto.Status ?? existingProject.Status
             };
 
             MockProjectRepo.Setup(repo => repo.GetProjectByIdAsync(existingProject.Id)).ReturnsAsync(existingProject);
@@ -63,12 +59,7 @@ namespace Tasktracker.Tests.ProjectsUnitTests
         [Fact]
         public async Task UpdateProjectAsync_WithNoUpdate_ShouldWork()
         {
-            ProjectEntity existingProject = new()
-            {
-                Id = 1,
-                Title = "Test 1",
-                Status = StatusEnum.New
-            };
+            ProjectEntity existingProject = ProjectTestData.ProjectEntityData();
 
             MockProjectRepo.Setup(repo => repo.GetProjectByIdAsync(existingProject.Id)).ReturnsAsync(existingProject);
             MockProjectRepo.Setup(repo => repo.UpdateProjectAsync(It.IsAny<ProjectEntity>(), It.IsAny<ProjectEntity>())).ReturnsAsync(existingProject);
