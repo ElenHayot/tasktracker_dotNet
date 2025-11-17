@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TasksUnitTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\tasktracker\tasktracker.csproj" />
   </ItemGroup>
 

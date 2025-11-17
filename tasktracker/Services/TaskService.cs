@@ -101,6 +101,8 @@ namespace tasktracker.Services
             {
                 await RemoveTaskFromProject(task.Id, existingProject);
             }
+            else
+                _logger.LogInformation($"DeleteTaskAsync - Remove from project : Project with id '{task.ProjectId}' not found - ignored");
 
             // Update associated user TaskIds list if userId != 0
             UserEntity? associatedUser = await _userRepository.GetUserByIdAsync(task.UserId);
@@ -108,9 +110,11 @@ namespace tasktracker.Services
             {
                 await RemoveTaskFromUser(task.Id, associatedUser);
             }
+            else
+                _logger.LogInformation($"DeleteTaskAsync - Remove from user : User with id '{task.UserId}' not found - ignored");
 
-            // Delete task in DB
-            bool deleted = await _taskRepository.DeleteTaskAsync(task);
+                // Delete task in DB
+                bool deleted = await _taskRepository.DeleteTaskAsync(task);
             if (!deleted)
             {
                 throw new Exception($"Error deleting the task with id {id}");
@@ -175,7 +179,7 @@ namespace tasktracker.Services
                         await RemoveTaskFromUser(existingEntity.Id, oldAssociatedUser);
                     }
                     else
-                        _logger.LogInformation($"RemoveTaskFromUser : User with id '{existingEntity.UserId} not found - ignored");
+                        _logger.LogInformation($"RemoveTaskFromUser : User with id '{existingEntity.UserId}' not found - ignored");
                 }
 
                 // Add to new user if new user != 0
