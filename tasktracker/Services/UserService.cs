@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SQLitePCL;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.ComponentModel.DataAnnotations;
+using tasktracker.Common;
 
 namespace tasktracker.Services
 {
@@ -17,6 +18,7 @@ namespace tasktracker.Services
     /// </summary>
     public class UserService : IUserService
     {
+        #region Service instancies
         /// <summary>
         /// Local user repository instance
         /// </summary>
@@ -31,7 +33,9 @@ namespace tasktracker.Services
         /// Local logger instance for UserService
         /// </summary>
         private readonly ILogger<UserService> _logger;
+        #endregion
 
+        #region Constructor
         /// <summary>
         /// UserService constructor
         /// </summary>
@@ -44,6 +48,9 @@ namespace tasktracker.Services
             _taskRepository = taskRepository;
             _logger = logger;
         }
+        #endregion
+
+        #region Public methods
 
         /// <inheritdoc/>
         public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
@@ -190,7 +197,9 @@ namespace tasktracker.Services
             }
             return await _userRepository.DeleteUserAsync(user);
         }
+        #endregion
 
+        #region Private methods
         /// <summary>
         /// Associate a user ID to a task
         /// </summary>
@@ -218,5 +227,6 @@ namespace tasktracker.Services
             task.UpdatedBy = userId.ToString();
             await _taskRepository.SaveUpdatesAsync(task);
         }
+        #endregion
     }
 }
