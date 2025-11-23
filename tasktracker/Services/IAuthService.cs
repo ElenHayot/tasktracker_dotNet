@@ -22,6 +22,13 @@ namespace tasktracker.Services
         /// </summary>
         /// <param name="loginDto">Login informations</param>
         /// <returns>Ok/Nok</returns>
-        Task<(string Token, UserDto User)> LoginUser(UserLoginDto loginDto);
+        Task<LoginResponseDto> LoginUser(UserLoginDto loginDto);
+
+        /// <summary>
+        /// Get the current user by the id stored in token
+        /// </summary>
+        /// <param name="userId">User ID stored in the token</param>
+        /// <returns>Current user or null</returns>
+        Task<UserDto> GetCurrentUserAsync(string? userId);
     }
 }

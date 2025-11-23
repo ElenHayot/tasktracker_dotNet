@@ -20,12 +20,19 @@ namespace tasktracker.Controllers
         private readonly IAuthService _authService;
 
         /// <summary>
+        /// Local user service instance
+        /// </summary>
+        private readonly IUserService _userService;
+
+        /// <summary>
         /// AuthController constructor
         /// </summary>
         /// <param name="authService">Auth service instance</param>
-        public AuthController(IAuthService authService)
+        /// <param name="userService">User service instance</param>
+        public AuthController(IAuthService authService, IUserService userService)
         {
             _authService = authService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -33,10 +40,11 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="loginDto">FromBody parameter with login infos</param>
         /// <returns></returns>
-        [HttpGet("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            return Ok(await _authService.LoginUser(loginDto));
+            LoginResponseDto response = await _authService.LoginUser(loginDto);
+            return Ok(response);
         }
 
         /// <summary>
@@ -45,10 +53,12 @@ namespace tasktracker.Controllers
         /// <returns>Me</returns>
         [Authorize]
         [HttpGet("me")]
-        public IActionResult GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            return Ok($"Hello user {userId}");
-        } 
+            //var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            UserDto user = await _authService.GetCurrentUserAsync(userId);
+            return Ok(user);
+        }
     }
 }

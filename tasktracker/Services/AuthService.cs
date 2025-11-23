@@ -43,7 +43,7 @@ namespace tasktracker.Services
         #region Public methods
 
         /// <inheritdoc/>
-        public async Task<(string Token, UserDto User)> LoginUser(UserLoginDto loginDto)
+        public async Task<LoginResponseDto> LoginUser(UserLoginDto loginDto)
         {
             var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
             // Verify email
@@ -60,7 +60,28 @@ namespace tasktracker.Services
             // Generate token
             string token = GenerateJwtToken(user);
 
-            return (token, UserMapper.ToDto(user));
+            return new LoginResponseDto() { Token = token, User = UserMapper.ToDto(user)};
+        }
+
+        /// <inheritdoc/>
+        public async Task<UserDto> GetCurrentUserAsync(string? userId)
+        {
+            if (String.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("userId");
+            }
+
+            if (!int.TryParse(userId, out var id)) {
+                throw new UnauthorizedAccessException("Invalid user id in token");
+            }
+
+            UserEntity? entity = await _userRepository.GetUserByIdAsync(id);
+            if (entity == null)
+            {
+                throw new NotFoundException($"User in token does not exist anymore");
+            }
+
+            return UserMapper.ToDto(entity);
         }
 
         /// <inheritdoc/>

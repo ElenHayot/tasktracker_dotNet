@@ -9,6 +9,22 @@ using tasktracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region CORS
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+#endregion
+
 #region JWT authorization
 // Récupère la section "Jwt" décrite dans appsettings.Development
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -89,6 +105,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

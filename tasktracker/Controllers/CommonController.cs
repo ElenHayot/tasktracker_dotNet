@@ -19,7 +19,7 @@ namespace tasktracker.Controllers
         /// Get the list of roles
         /// </summary>
         /// <returns>tasktracker.Enums.RolesEnum</returns>
-        [HttpGet("/roles")]
+        [HttpGet("roles")]
         public IActionResult GetRoles()
         {
             var roles = Enum.GetNames(typeof(RolesEnum));
@@ -30,7 +30,7 @@ namespace tasktracker.Controllers
         /// Get the list of status
         /// </summary>
         /// <returns>tasktracker.Enums.StatusEnum</returns>
-        [HttpGet("/status")]
+        [HttpGet("status")]
         public IActionResult GetStatus()
         {
             var status = Enum.GetNames(typeof(StatusEnum));
