@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
@@ -8,6 +9,7 @@ namespace tasktracker.Entities
     /// <summary>
     /// Entity model for Tasks table
     /// </summary>
+    [Index(nameof(Title), IsUnique = true)]
     public class TaskEntity : HandlingDto
     {
         /// <summary>

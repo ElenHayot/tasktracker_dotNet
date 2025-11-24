@@ -1,9 +1,11 @@
-﻿using tasktracker.DtoModels;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using tasktracker.DtoModels;
 using tasktracker.Entities;
+using tasktracker.Enums;
+using tasktracker.Exceptions;
 using tasktracker.Mappers;
 using tasktracker.Repositories;
-using tasktracker.Exceptions;
-using tasktracker.Enums;
 
 namespace tasktracker.Services
 {
@@ -12,6 +14,7 @@ namespace tasktracker.Services
     /// </summary>
     public class ProjectService : IProjectService
     {
+        #region Instancies
         /// <summary>
         /// Local project repository instance
         /// </summary>
@@ -26,6 +29,7 @@ namespace tasktracker.Services
         /// Local logger instance for ProjectService
         /// </summary>
         private readonly ILogger<ProjectService> _logger;
+        #endregion
 
         /// <summary>
         /// ProjectService constructor
@@ -40,12 +44,21 @@ namespace tasktracker.Services
             _logger = logger;
         }
 
+        #region Public methods
         /// <inheritdoc/>
         public async Task<ProjectDto> CreateProjectAsync(CreateProjectDto project)
         {
 
             ProjectEntity entity = ProjectMapper.ToCreateEntity(project);
-            var createdEntity = await _projectRepository.CreateProjectAsync(entity);
+            ProjectEntity createdEntity;
+            try
+            {
+                createdEntity = await _projectRepository.CreateProjectAsync(entity);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqliteException sqlEx && sqlEx.SqliteErrorCode == 19)
+            {
+                throw new TitleAlreadyExistsException($"There's already a project named '{entity.Title}'. Please modify your title.");
+            }
             ProjectDto projectDto = ProjectMapper.ToDto(createdEntity);
             return projectDto;
         }
@@ -142,5 +155,6 @@ namespace tasktracker.Services
             var projectDto = ProjectMapper.ToDto(updatedEntity);
             return projectDto;
         }
+        #endregion
     }
 }

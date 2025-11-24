@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using tasktracker.DtoModels;
@@ -9,6 +10,7 @@ namespace tasktracker.Entities
     /// <summary>
     /// Entity model for Users table
     /// </summary>
+    [Index(nameof(Email), IsUnique = true)]
     public class UserEntity : HandlingDto
     {
         /// <summary>

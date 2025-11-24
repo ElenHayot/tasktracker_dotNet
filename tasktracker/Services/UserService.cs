@@ -10,6 +10,8 @@ using SQLitePCL;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.ComponentModel.DataAnnotations;
 using tasktracker.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace tasktracker.Services
 {
@@ -55,15 +57,16 @@ namespace tasktracker.Services
         /// <inheritdoc/>
         public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
         {
-            // Unique email
-            var existingEmail = await _userRepository.GetUserByEmailAsync(userDto.Email);
-            if (existingEmail != null)
+            UserEntity userEntity = UserMapper.ToCreateEntity(userDto);
+            UserEntity createdUser;
+            try
+            {
+                createdUser = await _userRepository.CreateUserAsync(userEntity);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqliteException sqlEx && sqlEx.SqliteErrorCode == 19)
             {
                 throw new EmailAlreadyExistsException($"A user with this email already exists.");
             }
-
-            UserEntity userEntity = UserMapper.ToCreateEntity(userDto);
-            UserEntity createdUser = await _userRepository.CreateUserAsync(userEntity);
             UserDto user = UserMapper.ToDto(createdUser);
 
             return user;

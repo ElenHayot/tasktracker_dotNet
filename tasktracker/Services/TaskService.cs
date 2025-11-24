@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using tasktracker.DtoModels;
 using tasktracker.Entities;
@@ -14,6 +16,7 @@ namespace tasktracker.Services
     /// </summary>
     public class TaskService : ITaskService
     {
+        #region Instancies
         /// <summary>
         /// Local task repository instance
         /// </summary>
@@ -33,6 +36,7 @@ namespace tasktracker.Services
         /// Local logger instance for TaskService
         /// </summary>
         private readonly ILogger<TaskService> _logger;
+        #endregion
 
         /// <summary>
         /// TaskService constructor
@@ -49,6 +53,7 @@ namespace tasktracker.Services
             _logger = logger;
         }
 
+        #region Public methods
         /// <inheritdoc/>
         public async Task<TaskDto> CreateTaskAsync(CreateTaskDto task)
         {
@@ -70,8 +75,16 @@ namespace tasktracker.Services
             // Add task in DB
             TaskEntity newTaskEntity = TaskMapper.ToCreateEntity(task);
             // Get newTaskEntity to know the new task ID
-            newTaskEntity = await _taskRepository.CreateTaskAsync(newTaskEntity);
-            TaskDto createdTaskDto = TaskMapper.ToDto(newTaskEntity);
+            TaskEntity createdTaskEntity;
+            try
+            {
+                createdTaskEntity = await _taskRepository.CreateTaskAsync(newTaskEntity);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqliteException sqlEx && sqlEx.SqliteErrorCode == 19)
+            {
+                throw new TitleAlreadyExistsException($"There's already a task named '{newTaskEntity.Title}'. Please modify your title.");
+            }
+            TaskDto createdTaskDto = TaskMapper.ToDto(createdTaskEntity);
 
             // Add task ID to project.TaskIds
             await AddTaskToProject(createdTaskDto.Id, existingProject);
@@ -113,8 +126,8 @@ namespace tasktracker.Services
             else
                 _logger.LogInformation($"DeleteTaskAsync - Remove from user : User with id '{task.UserId}' not found - ignored");
 
-                // Delete task in DB
-                bool deleted = await _taskRepository.DeleteTaskAsync(task);
+            // Delete task in DB
+            bool deleted = await _taskRepository.DeleteTaskAsync(task);
             if (!deleted)
             {
                 throw new Exception($"Error deleting the task with id {id}");
@@ -199,7 +212,9 @@ namespace tasktracker.Services
 
             return TaskMapper.ToDto(updatedEntity);
         }
+        #endregion
 
+        #region Private methods
         /// <summary>
         /// Remove a task ID from a user TaskIds list
         /// </summary>
@@ -247,5 +262,6 @@ namespace tasktracker.Services
             project.TaskIds?.Add(taskId);
             await _projectRepository.SaveUpdatesAsync(project);
         }
+        #endregion
     }
 }

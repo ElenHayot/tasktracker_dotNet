@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
+using tasktracker.Exceptions;
 using tasktracker.Services;
 
 namespace tasktracker.Controllers
@@ -46,9 +47,16 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One user</returns>
         [HttpGet("{id}")]
-        public async Task<UserDto> GetUserById(int id)
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
-            return await _userService.GetUserByIdAsync(id);
+            try
+            {
+                return Ok(await _userService.GetUserByIdAsync(id));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -59,8 +67,15 @@ namespace tasktracker.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto userDto)
         {
-            UserDto user = await _userService.CreateUserAsync(userDto);
-            return Ok(user);
+            try
+            {
+                UserDto user = await _userService.CreateUserAsync(userDto);
+                return Ok(user);
+            }
+            catch (EmailAlreadyExistsException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         /// <summary>
@@ -72,8 +87,15 @@ namespace tasktracker.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
         {
-            UserDto updatedUser = await _userService.UpdateUserAsync(id, userDto);
-            return Ok(updatedUser);
+            try
+            {
+                UserDto updatedUser = await _userService.UpdateUserAsync(id, userDto);
+                return Ok(updatedUser);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -84,8 +106,15 @@ namespace tasktracker.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteUser(int id)
         {
-            await _userService.DeleteUserAsync(id);
-            return Ok();
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+                return Ok();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

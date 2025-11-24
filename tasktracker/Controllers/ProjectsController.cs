@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
+using tasktracker.Exceptions;
 using tasktracker.Services;
 
 namespace tasktracker.Controllers
@@ -45,9 +46,16 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One project</returns>
         [HttpGet("{id}")]
-        public async Task<ProjectDto> GetProjectById(int id)
+        public async Task<ActionResult<ProjectDto>> GetProjectById(int id)
         {
-            return await _projectService.GetProjectByIdAsync(id);
+            try
+            {
+                return Ok(await _projectService.GetProjectByIdAsync(id));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -58,8 +66,15 @@ namespace tasktracker.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto dto)
         {
-            var project = await _projectService.CreateProjectAsync(dto);
-            return Ok(project);
+            try
+            {
+                var project = await _projectService.CreateProjectAsync(dto);
+                return Ok(project);
+            }
+            catch (TitleAlreadyExistsException ex) 
+            {
+                return Conflict(ex.Message);
+            }
         }
 
         /// <summary>
@@ -71,8 +86,15 @@ namespace tasktracker.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProject(int id, [FromBody] UpdateProjectDto dto)
         {
-            var updatedProject = await _projectService.UpdateProjectAsync(id, dto);
-            return Ok(updatedProject);
+            try
+            {
+                var updatedProject = await _projectService.UpdateProjectAsync(id, dto);
+                return Ok(updatedProject);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -84,8 +106,23 @@ namespace tasktracker.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id, [FromQuery] bool forceTaskDeleting = false)
         {
-            bool deleted = await _projectService.DeleteProjectAsync(id, forceTaskDeleting);
-            return Ok(deleted);
+            try
+            {
+                bool deleted = await _projectService.DeleteProjectAsync(id, forceTaskDeleting);
+                return Ok(deleted);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UncompletedTasksAssociated ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

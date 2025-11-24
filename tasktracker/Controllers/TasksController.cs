@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
+using tasktracker.Exceptions;
 using tasktracker.Services;
 
 namespace tasktracker.Controllers
@@ -47,9 +48,16 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One task</returns>
         [HttpGet("{id}")]
-        public async Task<TaskDto> GetTaskById(int id)
+        public async Task<ActionResult<TaskDto>> GetTaskById(int id)
         {
-            return await _taskService.GetTaskByIdAsync(id);
+            try
+            {
+                return Ok(await _taskService.GetTaskByIdAsync(id));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -60,7 +68,22 @@ namespace tasktracker.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateTask([FromBody] CreateTaskDto dto)
         {
-            return Ok(await  _taskService.CreateTaskAsync(dto));
+            try
+            {
+                return Ok(await _taskService.CreateTaskAsync(dto));
+            }
+            catch (AssociatedProjectNotFound ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
+            catch (AssociatedUserNotFound ex)
+            {
+                return UnprocessableEntity(ex.Message);
+            }
+            catch (TitleAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
 
         /// <summary>
@@ -72,7 +95,14 @@ namespace tasktracker.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateTask(int id, [FromBody] UpdateTaskDto updates)
         {
-            return Ok(await _taskService.UpdateTaskAsync(id, updates));
+            try
+            {
+                return Ok(await _taskService.UpdateTaskAsync(id, updates));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -83,7 +113,18 @@ namespace tasktracker.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTask(int id)
         {
-            return Ok(await _taskService.DeleteTaskAsync(id));
+            try
+            {
+                return Ok(await _taskService.DeleteTaskAsync(id));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     } 
 }

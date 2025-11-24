@@ -18,7 +18,8 @@ namespace tasktracker.Common
             byte[] salt = RandomNumberGenerator.GetBytes(16);
 
             // PBKDF2 hash
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
+            // Fot charge testing - number of iteration 100_000 -> 1_000
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1_000, HashAlgorithmName.SHA256);
             byte[] hash = pbkdf2.GetBytes(32);
 
             // hash + salt
