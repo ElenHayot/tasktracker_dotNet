@@ -99,7 +99,7 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteTaskAsync(int id)
+        public async Task DeleteTaskAsync(int id)
         {
             TaskEntity? task = await _taskRepository.GetTaskByIdAsync(id);
             if (task == null)
@@ -127,13 +127,7 @@ namespace tasktracker.Services
                 _logger.LogInformation($"DeleteTaskAsync - Remove from user : User with id '{task.UserId}' not found - ignored");
 
             // Delete task in DB
-            bool deleted = await _taskRepository.DeleteTaskAsync(task);
-            if (!deleted)
-            {
-                throw new Exception($"Error deleting the task with id {id}");
-            }
-
-            return deleted;
+            await _taskRepository.DeleteTaskAsync(task);
         }
 
         /// <inheritdoc/>

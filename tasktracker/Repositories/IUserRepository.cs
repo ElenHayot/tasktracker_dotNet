@@ -47,8 +47,8 @@ namespace tasktracker.Repositories
         /// Delete an existing user
         /// </summary>
         /// <param name="user">User to delete</param>
-        /// <returns>true/false</returns>
-        Task<bool> DeleteUserAsync(UserEntity user);
+        /// <returns></returns>
+        Task DeleteUserAsync(UserEntity user);
 
         /// <summary>
         /// Save changes when changes done in service

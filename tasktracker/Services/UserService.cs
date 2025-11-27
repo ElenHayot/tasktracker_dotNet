@@ -191,14 +191,14 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
             UserEntity? user = await _userRepository.GetUserByIdAsync(id);
             if (user == null)
             {
                 throw new NotFoundException($"No user with id '{id}' found.");
             }
-            return await _userRepository.DeleteUserAsync(user);
+            await _userRepository.DeleteUserAsync(user);
         }
         #endregion
 

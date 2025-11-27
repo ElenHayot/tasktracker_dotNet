@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
@@ -71,7 +72,7 @@ namespace tasktracker.Controllers
                 var project = await _projectService.CreateProjectAsync(dto);
                 return Ok(project);
             }
-            catch (TitleAlreadyExistsException ex) 
+            catch (TitleAlreadyExistsException ex)
             {
                 return Conflict(ex.Message);
             }
@@ -103,13 +104,14 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <param name="forceTaskDeleting">FromQuery parameter - boolean</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id, [FromQuery] bool forceTaskDeleting = false)
         {
             try
             {
-                bool deleted = await _projectService.DeleteProjectAsync(id, forceTaskDeleting);
-                return Ok(deleted);
+                await _projectService.DeleteProjectAsync(id, forceTaskDeleting);
+                return NoContent();
             }
             catch (NotFoundException ex)
             {
@@ -118,10 +120,6 @@ namespace tasktracker.Controllers
             catch (UncompletedTasksAssociated ex)
             {
                 return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
             }
         }
     }

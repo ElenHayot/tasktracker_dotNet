@@ -115,15 +115,12 @@ namespace tasktracker.Controllers
         {
             try
             {
-                return Ok(await _taskService.DeleteTaskAsync(id));
+                await _taskService.DeleteTaskAsync(id);
+                return NoContent();
             }
             catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
             }
         }
     } 

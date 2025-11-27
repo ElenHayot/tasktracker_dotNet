@@ -64,7 +64,7 @@ namespace tasktracker.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteProjectAsync(int id, bool forceTaskDeleting = false)
+        public async Task DeleteProjectAsync(int id, bool forceTaskDeleting = false)
         {
             ProjectEntity? projectEntity = await _projectRepository.GetProjectByIdAsync(id);
             if (projectEntity == null)
@@ -102,13 +102,7 @@ namespace tasktracker.Services
             }
 
             // Delete project
-            bool deleted = await _projectRepository.DeleteProjectAsync(projectEntity);
-            if (!deleted)
-            {
-                throw new Exception($"Error deleting the project with id {id}");
-            }
-
-            return deleted;
+            await _projectRepository.DeleteProjectAsync(projectEntity);
         }
 
         /// <inheritdoc/>

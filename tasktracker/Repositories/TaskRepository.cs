@@ -40,11 +40,10 @@ namespace tasktracker.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteTaskAsync(TaskEntity task)
+        public async Task DeleteTaskAsync(TaskEntity task)
         {
             _context.Remove(task);
             await _context.SaveChangesAsync();
-            return true;
         }
 
         /// <inheritdoc/>

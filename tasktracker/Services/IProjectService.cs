@@ -47,7 +47,7 @@ namespace tasktracker.Services
         /// When true, delete all associated tasks whatever the task.Status value
         /// When false, stop and send an error if one associated task.Status != "Completed", "Closed", "Undefined"
         /// </param>
-        /// <returns>true/false</returns>
-        Task<bool> DeleteProjectAsync(int id,  bool forceTaskDeleting);
+        /// <returns></returns>
+        Task DeleteProjectAsync(int id,  bool forceTaskDeleting);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
@@ -103,13 +105,23 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
+            int currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var currentUserRole = User.FindFirst(ClaimTypes.Role)!.Value;
+
+            // Can delete account only if it's the current user's account or if current user is admin
+            if (currentUserId != id && currentUserRole != RolesEnum.Admin.ToString())
+            {
+                return Forbid();
+            }
+
             try
             {
                 await _userService.DeleteUserAsync(id);
-                return Ok();
+                return NoContent();
             }
             catch (NotFoundException ex)
             {

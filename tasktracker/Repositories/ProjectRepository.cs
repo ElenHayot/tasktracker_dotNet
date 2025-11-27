@@ -41,11 +41,10 @@ namespace tasktracker.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteProjectAsync(ProjectEntity project)
+        public async Task DeleteProjectAsync(ProjectEntity project)
         {
             _context.Remove(project);
             await _context.SaveChangesAsync();
-            return true;
         }
 
         /// <inheritdoc/>

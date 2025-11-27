@@ -45,7 +45,7 @@ namespace tasktracker.Services
         /// Delete an existing task
         /// </summary>
         /// <param name="id">Task's ID to delete</param>
-        /// <returns>true/false</returns>
-        Task<bool> DeleteTaskAsync(int id);
+        /// <returns></returns>
+        Task DeleteTaskAsync(int id);
     }
 }

@@ -72,11 +72,10 @@ namespace tasktracker.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DeleteUserAsync(UserEntity user)
+        public async Task DeleteUserAsync(UserEntity user)
         {
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-            return true;
         }
 
         /// <inheritdoc/>

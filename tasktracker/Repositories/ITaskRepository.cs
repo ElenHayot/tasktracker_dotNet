@@ -41,8 +41,8 @@ namespace tasktracker.Repositories
         /// Delete an existing task
         /// </summary>
         /// <param name="task">Task to delete</param>
-        /// <returns>true/false</returns>
-        Task<bool> DeleteTaskAsync(TaskEntity task);
+        /// <returns></returns>
+        Task DeleteTaskAsync(TaskEntity task);
 
         /// <summary>
         /// Save changes when changes done in service

@@ -52,8 +52,8 @@ namespace tasktracker.Services
         /// Delete an existing user in DB
         /// </summary>
         /// <param name="id">User's ID</param>
-        /// <returns>true/false</returns>
-        Task<bool> DeleteUserAsync(int id);
+        /// <returns></returns>
+        Task DeleteUserAsync(int id);
 
     }
 }
