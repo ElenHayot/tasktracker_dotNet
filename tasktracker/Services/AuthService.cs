@@ -27,6 +27,11 @@ namespace tasktracker.Services
         /// Local user repository instance
         /// </summary>
         private readonly IUserRepository _userRepository;
+
+        /// <summary>
+        /// Local refresh token service instance
+        /// </summary>
+        private readonly IRefreshTokenService _refreshTokenService;
         #endregion
 
         /// <summary>
@@ -34,16 +39,17 @@ namespace tasktracker.Services
         /// </summary>
         /// <param name="config">Appsettings instance</param>
         /// <param name="userRepository">User repository instance</param>
-        public AuthService(IConfiguration config, IUserRepository userRepository)
+        /// <param name="refreshTokenService">Refresh token service instance</param>
+        public AuthService(IConfiguration config, IUserRepository userRepository, IRefreshTokenService refreshTokenService)
         {
             _config = config;
             _userRepository = userRepository;
+            _refreshTokenService = refreshTokenService;
         }
 
         #region Public methods
-
         /// <inheritdoc/>
-        public async Task<LoginResponseDto> LoginUser(UserLoginDto loginDto)
+        public async Task<LoginResponseDto> LoginUserAsync(UserLoginDto loginDto, string ip)
         {
             var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
             // Verify email
@@ -58,9 +64,49 @@ namespace tasktracker.Services
             }
 
             // Generate token
-            string token = GenerateJwtToken(user);
+            string accessToken = GenerateJwtToken(user);
+            var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id, ip);
 
-            return new LoginResponseDto() { Token = token, User = UserMapper.ToDto(user)};
+            return new LoginResponseDto() { 
+                AccessToken = accessToken, 
+                RefreshToken = refreshToken.Token, 
+                User = UserMapper.ToDto(user)
+            };
+        }
+
+        /// <inheritdoc/>
+        public async Task<LoginResponseDto> RefreshAsync(string refreshToken)
+        {
+            var storedRefreshToken = await _refreshTokenService.GetByTokenAsync(refreshToken);
+
+            if (storedRefreshToken == null || storedRefreshToken.IsRevoked || storedRefreshToken.ExpiresAt <= DateTime.UtcNow)
+            {
+                throw new UnauthorizedAccessException("Invalid token");
+            }
+
+            UserEntity? user = await _userRepository.GetUserByIdAsync(storedRefreshToken.UserId);
+            if (user == null) { throw new NotFoundException($"No user with ID '{storedRefreshToken.UserId}' found."); }
+            
+            string newAccessToken = GenerateJwtToken(user);
+
+            return new LoginResponseDto()
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = storedRefreshToken.Token,
+                User = UserMapper.ToDto(user)
+            };
+        }
+
+        /// <inheritdoc/>
+        public async Task LogoutUserAsync(string refreshToken, string ipAddress)
+        {
+            await _refreshTokenService.RevokeAsync(refreshToken, ipAddress, "Logout user");
+        }
+
+        /// <inheritdoc/>
+        public async Task LogoutFromAllDevicesAsync(int userId, string ipAddress)
+        {
+            await _refreshTokenService.RevokeAllUserTokensAsync(userId, ipAddress, "Logout user from all devices");
         }
 
         /// <inheritdoc/>
@@ -68,17 +114,17 @@ namespace tasktracker.Services
         {
             if (String.IsNullOrEmpty(userId))
             {
-                throw new UnauthorizedAccessException("userId");
+                throw new UnauthorizedAccessException("Token user ID is null");
             }
 
             if (!int.TryParse(userId, out var id)) {
-                throw new UnauthorizedAccessException("Invalid user id in token");
+                throw new UnauthorizedAccessException("Invalid user ID in token");
             }
 
             UserEntity? entity = await _userRepository.GetUserByIdAsync(id);
             if (entity == null)
             {
-                throw new NotFoundException($"User in token does not exist anymore");
+                throw new NotFoundException($"User ID in token does not exist anymore");
             }
 
             return UserMapper.ToDto(entity);
@@ -97,7 +143,7 @@ namespace tasktracker.Services
                 new Claim(ClaimTypes.Role, user.Role.ToString())            // user role for authorization
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -113,6 +159,24 @@ namespace tasktracker.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <inheritdoc/>
+        public string GetClientIp(HttpContext context)
+        {
+            // If X-Forwardeed-For in header : take first IP address (client IP address)
+            if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwarded)){
+                var ip = forwarded.ToString().Split(',').First().Trim();
+                if (!String.IsNullOrEmpty(ip)) { return ip; }
+            }
+
+            // if X-Real-IP in headers (useer by NGINX)
+            if (context.Request.Headers.TryGetValue("X-Real-IP", out var realIp))
+            {
+                return realIp!;
+            }
+
+            // Fallback -> client or proxy IP address
+            return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        }
         #endregion
 
     }

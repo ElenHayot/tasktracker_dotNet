@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using tasktracker.DtoModels;
+using tasktracker.Exceptions;
 using tasktracker.Services;
 
 namespace tasktracker.Controllers
@@ -36,15 +37,68 @@ namespace tasktracker.Controllers
         }
 
         /// <summary>
-        /// Call AuthService.LoginUser
+        /// Call AuthService.LoginUserAsync
         /// </summary>
         /// <param name="loginDto">FromBody parameter with login infos</param>
         /// <returns></returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            LoginResponseDto response = await _authService.LoginUser(loginDto);
+            string ip = _authService.GetClientIp(HttpContext);
+            LoginResponseDto response = await _authService.LoginUserAsync(loginDto, ip);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Call AuthService.RefreshAsync
+        /// </summary>
+        /// <param name="refreshToken">FromBody refreshToken value</param>
+        /// <returns></returns>
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] string refreshToken)
+        {
+            try
+            {
+                var response = await _authService.RefreshAsync(refreshToken);
+                return Ok(response);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Call AuthService.LogoutUserAsync
+        /// </summary>
+        /// <param name="refreshToken">FromBody refresh token value</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] string refreshToken)
+        {
+            string ipAddress = _authService.GetClientIp(HttpContext);
+            await _authService.LogoutUserAsync(refreshToken, ipAddress);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Call AuthService.LogoutFromAllDevicesAsync
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("logout-all")]
+        public async Task<IActionResult> LogoutFromAllDevices()
+        {
+            int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            string ipAddress = _authService.GetClientIp(HttpContext);
+
+            await _authService.LogoutFromAllDevicesAsync(userId, ipAddress);
+            return NoContent();
         }
 
         /// <summary>
@@ -55,10 +109,21 @@ namespace tasktracker.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            //var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserDto user = await _authService.GetCurrentUserAsync(userId);
-            return Ok(user);
+            try
+            {
+                //var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                UserDto user = await _authService.GetCurrentUserAsync(userId);
+                return Ok(user);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace tasktracker.Repositories
         /// <summary>
         /// Get all projects with optional filter applied
         /// </summary>
-        /// <param name="filter">Filter to applly on the query</param>
+        /// <param name="filter">Filter to apply on the query</param>
         /// <returns>Filtered project list</returns>
         Task<IEnumerable<ProjectEntity>> GetAllProjectsFilteredAsync(ProjectQueryFilter filter);
 

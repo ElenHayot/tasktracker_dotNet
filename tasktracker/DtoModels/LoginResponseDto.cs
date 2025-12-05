@@ -6,9 +6,14 @@
     public class LoginResponseDto
     {
         /// <summary>
-        /// Created token
+        /// Created access token
         /// </summary>
-        public string Token { get; set; } = default!;
+        public string AccessToken { get; set; } = default!;
+
+        /// <summary>
+        /// Created refresh token
+        /// </summary>
+        public string RefreshToken { get; set; } = default!;
 
         /// <summary>
         /// Corresponding user
