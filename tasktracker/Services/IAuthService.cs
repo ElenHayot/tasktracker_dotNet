@@ -28,9 +28,9 @@ namespace tasktracker.Services
         /// Login user
         /// </summary>
         /// <param name="loginDto">Login informations</param>
-        /// <param name="ip">Login IP</param>
+        /// <param name="ipAddress">Login IP</param>
         /// <returns>A LoginResponseDto object</returns>
-        Task<LoginResponseDto> LoginUserAsync(UserLoginDto loginDto, string ip);
+        Task<LoginServiceResponseDto> LoginUserAsync(UserLoginDto loginDto, string ipAddress);
 
         /// <summary>
         /// Get the current user by the id stored in token

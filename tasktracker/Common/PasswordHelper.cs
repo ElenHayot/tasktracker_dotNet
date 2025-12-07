@@ -44,7 +44,7 @@ namespace tasktracker.Common
             byte[] salt = new byte[16];
             Buffer.BlockCopy(hashBytes, 0, salt, 0, 16);
 
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1_000, HashAlgorithmName.SHA256);
             byte[] hash = pbkdf2.GetBytes(32);
 
             for (int i = 0; i < 32; i++)

@@ -11,8 +11,9 @@ namespace tasktracker.Controllers
     /// <summary>
     /// Auth controller - manage authentication part
     /// </summary>
+    // [Route("api/v1/auth")]
     [ApiController]
-    [Route("api/v1/[Controller]")]  // api/v1/auth
+    [Route("api/v1/[Controller]")]  // api/v1/Auth
     public class AuthController : ControllerBase
     {
         /// <summary>
@@ -44,30 +45,60 @@ namespace tasktracker.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            string ip = _authService.GetClientIp(HttpContext);
-            LoginResponseDto response = await _authService.LoginUserAsync(loginDto, ip);
-            return Ok(response);
+            try
+            {
+                string ipAddress = _authService.GetClientIp(HttpContext);
+                LoginServiceResponseDto responseSvc = await _authService.LoginUserAsync(loginDto, ipAddress);
+
+                //Store the refresh token in a httpOnly cookie
+                Response.Cookies.Append("refreshToken", responseSvc.RefreshToken.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true, // HTTPS only
+                    SameSite = SameSiteMode.Strict,
+                    Expires = responseSvc.RefreshToken.ExpiresAt
+                });
+
+                return Ok(responseSvc.ResponseDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(WrongPasswordException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
         /// Call AuthService.RefreshAsync
         /// </summary>
-        /// <param name="refreshToken">FromBody refreshToken value</param>
         /// <returns></returns>
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] string refreshToken)
+        public async Task<IActionResult> Refresh()
         {
             try
             {
-                var response = await _authService.RefreshAsync(refreshToken);
-                return Ok(response);
+                var refreshToken = Request.Cookies["refreshToken"];
+                if (refreshToken != null)
+                {
+                    var response = await _authService.RefreshAsync(refreshToken);
+                    return Ok(response);
+                } else
+                {
+                    return Unauthorized("Expired cookie");
+                }
+                    
             }
             catch (NotFoundException ex)
             {
+                Response.Cookies.Delete("refreshToken");
                 return BadRequest(ex.Message);
             }
             catch (UnauthorizedAccessException ex)
             {
+                Response.Cookies.Delete("refreshToken");
                 return Unauthorized(ex.Message);
             }
         }

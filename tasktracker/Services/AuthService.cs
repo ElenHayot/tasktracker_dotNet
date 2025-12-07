@@ -49,7 +49,7 @@ namespace tasktracker.Services
 
         #region Public methods
         /// <inheritdoc/>
-        public async Task<LoginResponseDto> LoginUserAsync(UserLoginDto loginDto, string ip)
+        public async Task<LoginServiceResponseDto> LoginUserAsync(UserLoginDto loginDto, string ipAddress)
         {
             var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
             // Verify email
@@ -65,13 +65,10 @@ namespace tasktracker.Services
 
             // Generate token
             string accessToken = GenerateJwtToken(user);
-            var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id, ip);
+            var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id, ipAddress);
+            LoginResponseDto responseDto = new() { AccessToken = accessToken, User = UserMapper.ToDto(user) };
 
-            return new LoginResponseDto() { 
-                AccessToken = accessToken, 
-                RefreshToken = refreshToken.Token, 
-                User = UserMapper.ToDto(user)
-            };
+            return new LoginServiceResponseDto(refreshToken, responseDto);
         }
 
         /// <inheritdoc/>
@@ -92,7 +89,6 @@ namespace tasktracker.Services
             return new LoginResponseDto()
             {
                 AccessToken = newAccessToken,
-                RefreshToken = storedRefreshToken.Token,
                 User = UserMapper.ToDto(user)
             };
         }

@@ -37,6 +37,7 @@ namespace tasktracker.Controllers
         /// <param name="phone">FromQuery parameter 'phone' - string</param>
         /// <param name="role">FromQuery parameter 'role' - Enum value</param>
         /// <returns>List of users</returns>
+        [Authorize]
         [HttpGet]
         public async Task<IEnumerable<UserDto>> GetAllUsersFiltered([FromQuery] string? name, [FromQuery] string? firstname, [FromQuery] string? phone, [FromQuery] RolesEnum? role)
         {
@@ -48,6 +49,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One user</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
@@ -86,6 +88,7 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <param name="userDto">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
         {

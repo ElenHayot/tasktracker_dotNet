@@ -20,6 +20,12 @@ namespace tasktracker.Services
         /// </summary>
         private readonly ILogger<TokenCleanupService> _logger;
 
+        public TokenCleanupService(IServiceProvider services, ILogger<TokenCleanupService> logger)
+        {
+            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
         /// <summary>
         /// Delete tokens expired or revoked 30 days ago
         /// </summary>

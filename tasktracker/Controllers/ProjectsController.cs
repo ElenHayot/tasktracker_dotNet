@@ -35,6 +35,7 @@ namespace tasktracker.Controllers
         /// <param name="description">FromQuery parameter 'description' - string</param>
         /// <param name="status">FromQuery parameter 'status' - Enum value</param>
         /// <returns>List of projects</returns>
+        [Authorize]
         [HttpGet]
         public async Task<IEnumerable<ProjectDto>> GetAllProjectsFiltered([FromQuery] string? title, [FromQuery] string? description, [FromQuery] StatusEnum? status)
         {
@@ -46,6 +47,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One project</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDto>> GetProjectById(int id)
         {
@@ -64,6 +66,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="dto">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto dto)
         {
@@ -84,6 +87,7 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <param name="dto">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProject(int id, [FromBody] UpdateProjectDto dto)
         {

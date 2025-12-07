@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using tasktracker.DtoModels;
 using tasktracker.Enums;
 using tasktracker.Exceptions;
@@ -36,6 +37,7 @@ namespace tasktracker.Controllers
         /// <param name="userId">FromQuery parameter userId - integer</param>
         /// <param name="status">FromQuery parameter status - Enum value</param>
         /// <returns>List of tasks</returns>
+        [Authorize]
         [HttpGet]
         public async Task<IEnumerable<TaskDto>> GetAllTasksFiltered([FromQuery] string? title, [FromQuery] string? description, [FromQuery] int? projectId, [FromQuery] int? userId, [FromQuery] StatusEnum? status)
         {
@@ -47,6 +49,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
         /// <returns>One task</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskDto>> GetTaskById(int id)
         {
@@ -65,6 +68,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="dto">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreateTask([FromBody] CreateTaskDto dto)
         {
@@ -92,6 +96,7 @@ namespace tasktracker.Controllers
         /// <param name="id">URL parameter - integer</param>
         /// <param name="updates">FromBody object</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateTask(int id, [FromBody] UpdateTaskDto updates)
         {
@@ -110,6 +115,7 @@ namespace tasktracker.Controllers
         /// </summary>
         /// <param name="id">URL parameter - integer</param>
         /// <returns>Ok/Nok result</returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTask(int id)
         {
