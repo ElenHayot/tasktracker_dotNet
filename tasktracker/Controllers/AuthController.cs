@@ -54,9 +54,10 @@ namespace tasktracker.Controllers
                 Response.Cookies.Append("refreshToken", responseSvc.RefreshToken.Token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // HTTPS only
-                    SameSite = SameSiteMode.Strict,
-                    Expires = responseSvc.RefreshToken.ExpiresAt
+                    Secure = true, // false => http/https; true => HTTPS only
+                    SameSite = SameSiteMode.None, // cross-origin : different ports between server and front
+                    Expires = responseSvc.RefreshToken.ExpiresAt,
+                    Path = "/"  // "All routes" access
                 });
 
                 return Ok(responseSvc.ResponseDto);
@@ -81,6 +82,7 @@ namespace tasktracker.Controllers
             try
             {
                 var refreshToken = Request.Cookies["refreshToken"];
+
                 if (refreshToken != null)
                 {
                     var response = await _authService.RefreshAsync(refreshToken);
