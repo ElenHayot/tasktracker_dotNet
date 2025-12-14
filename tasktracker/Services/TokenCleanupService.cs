@@ -27,6 +27,17 @@ namespace tasktracker.Services
         }
 
         /// <summary>
+        /// TokenCleanupService constructor
+        /// </summary>
+        /// <param name="services">Service provider instance</param>
+        /// <param name="logger">Logger instance</param>
+        public TokenCleanupService(IServiceProvider services, ILogger<TokenCleanupService> logger)
+        {
+            _services = services;
+            _logger = logger;
+        }
+
+        /// <summary>
         /// Delete tokens expired or revoked 30 days ago
         /// </summary>
         /// <param name="stoppingToken"></param>
