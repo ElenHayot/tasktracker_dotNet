@@ -19,13 +19,7 @@ namespace tasktracker.Services
         /// Local logger instance
         /// </summary>
         private readonly ILogger<TokenCleanupService> _logger;
-
-        public TokenCleanupService(IServiceProvider services, ILogger<TokenCleanupService> logger)
-        {
-            _services = services ?? throw new ArgumentNullException(nameof(services));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
+        
         /// <summary>
         /// TokenCleanupService constructor
         /// </summary>
@@ -33,8 +27,8 @@ namespace tasktracker.Services
         /// <param name="logger">Logger instance</param>
         public TokenCleanupService(IServiceProvider services, ILogger<TokenCleanupService> logger)
         {
-            _services = services;
-            _logger = logger;
+            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -49,7 +43,7 @@ namespace tasktracker.Services
                 using var scope = _services.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                // Delete tokens exired 30 days ago
+                // Delete tokens expired 30 days ago
                 var cutoffDate = DateTime.UtcNow.AddDays(30);
                 var expiredTokens = await context.RefreshTokens.Where(rt => rt.ExpiresAt < cutoffDate || (rt.IsRevoked && rt.RevokedAt < cutoffDate)).ToListAsync(stoppingToken);
 
